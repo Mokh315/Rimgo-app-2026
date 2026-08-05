@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ريمڤو RIMGO — ابدأ من هنا</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--night:#08241A;--acacia:#0B6B45;--acacia2:#12905C;--sun:#F5B72C;--sun-deep:#B98A00;
+--atl:#1B8E96;--dune:#F2E7D3;--dune2:#FAF4E9;--ink:#0C1512;--muted:#6B7C73;--line:rgba(11,107,69,.16);
+--ar:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;
+--disp:"Tajawal","IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;
+--mono:"IBM Plex Mono",ui-monospace,"Courier New",monospace;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--dune2);color:var(--ink);font-family:var(--ar);font-size:15px;line-height:1.8;overflow-x:hidden}
+h1,h2,h3{font-family:var(--disp);line-height:1.25;margin:0}
+.wrap{width:min(1080px,92vw);margin-inline:auto}
+.mono{font-family:var(--mono);direction:ltr;display:inline-block}
+.hero{background:var(--night);color:var(--dune);padding:56px 0 62px;position:relative;overflow:hidden}
+.hero .wrap{position:relative;display:flex;gap:36px;align-items:center;flex-wrap:wrap}
+.hero svg.mk{width:120px;height:120px;flex:0 0 auto}
+.hero h1{font-size:clamp(34px,5vw,52px);font-weight:900}
+.hero .lat{font-family:var(--mono);letter-spacing:8px;color:var(--sun);font-size:13px;direction:ltr;margin-top:4px}
+.hero .tg{font-family:var(--disp);font-weight:700;font-size:20px;margin-top:12px;color:var(--dune)}
+.hero p{color:rgba(242,231,211,.68);margin:6px 0 0;max-width:60ch;font-size:14px}
+.dunes{position:absolute;inset:0;opacity:.45}
+section{padding:46px 0}
+.kick{font-family:var(--mono);font-size:10.5px;letter-spacing:3px;color:var(--sun-deep);direction:ltr;text-align:right}
+h2{font-size:26px;font-weight:800;margin:8px 0 4px}
+.sub{color:var(--muted);margin:0 0 26px;max-width:72ch}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+a.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:#fff;
+ border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.2s;box-shadow:0 18px 40px -34px rgba(8,36,26,.6)}
+a.card:hover{transform:translateY(-3px);border-color:var(--sun);box-shadow:0 26px 50px -30px rgba(8,36,26,.45)}
+a.card:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.thumb{height:132px;display:grid;place-items:center;position:relative}
+.thumb b{font-family:var(--disp);font-size:19px;font-weight:800}
+.card .body{padding:16px 18px 18px}
+.card h3{font-size:18px;margin-bottom:6px}
+.card p{margin:0;font-size:13px;color:#46584F}
+.card .go{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--acacia)}
+.steps{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin-top:26px}
+.steps h3{font-size:18px;margin-bottom:12px}
+.steps ol{margin:0;padding-inline-start:20px;font-size:14px;color:#3B4A43}
+.steps li{margin-bottom:8px}
+.steps code{font-family:var(--mono);background:var(--dune2);padding:1px 6px;border-radius:5px;font-size:12.5px;direction:ltr;display:inline-block}
+.files{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}
+.file{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.file .ext{font-family:var(--mono);font-size:10px;font-weight:600;color:#fff;background:var(--acacia);padding:3px 7px;border-radius:6px;flex:0 0 auto;margin-top:2px}
+.file b{display:block;font-size:14px}
+.file span{font-size:12.5px;color:#46584F}
+.warn{background:rgba(245,183,44,.12);border:1px solid rgba(245,183,44,.5);border-radius:14px;padding:16px 18px;margin-top:20px;font-size:13.5px;color:#6B5310}
+footer{background:var(--night);color:rgba(242,231,211,.6);padding:30px 0;font-size:13px;margin-top:34px}
+@media(max-width:900px){.cards{grid-template-columns:1fr}.files{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="g" x1="20" y1="112" x2="98" y2="16" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#E09A00"/><stop offset=".55" stop-color="#F5B72C"/><stop offset="1" stop-color="#FFE694"/></linearGradient>
+<symbol id="mark" viewBox="0 0 120 120"><path fill="url(#g)" fill-rule="evenodd" d="M60 110 C43 87, 28 73, 28 52 A32 32 0 1 1 92 52 C92 73 77 87 60 110 Z M52.93 30.23 A21 21 0 1 0 79.77 57.07 A19.5 19.5 0 0 1 52.93 30.23 Z M73.50 31.00 L75.48 35.77 L80.63 36.18 L76.71 39.54 L77.91 44.57 L73.50 41.88 L69.09 44.57 L70.29 39.54 L66.37 36.18 L71.52 35.77 Z"/></symbol>
+</defs></svg>
+
+<header class="hero">
+  <svg class="dunes" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 290 C 220 240 360 330 560 302 C 760 274 900 200 1120 236 C 1280 262 1360 310 1440 290 L1440 400 L0 400Z" fill="#0B3125"/>
+    <path d="M0 340 C 260 306 420 374 640 350 C 880 324 1040 290 1240 320 C 1340 335 1400 356 1440 346 L1440 400 L0 400Z" fill="#0D3A2B"/>
+  </svg>
+  <div class="wrap">
+    <svg class="mk"><use href="#mark"/></svg>
+    <div>
+      <h1>ريمڤو</h1>
+      <div class="lat">RIMGO</div>
+      <div class="tg">نوصّلك… ونوصّل لك</div>
+      <p>حزمة العرض الكاملة. اضغط على أي بطاقة أدناه لفتحها في المتصفح — كل شيء يعمل من جهازك مباشرة بلا إنترنت وبلا تثبيت أي برنامج.</p>
+    </div>
+  </div>
+</header>
+
+<section><div class="wrap">
+  <div class="kick">OPEN THESE</div>
+  <h2>الملفات التفاعلية الثلاثة</h2>
+  <p class="sub">تُفتح في أي متصفح: كروم أو فايرفوكس أو إيدج أو سفاري، على الحاسوب أو الهاتف.</p>
+  <div class="cards">
+    <a class="card" href="platform.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#12905C,#05301F)">
+        <svg style="width:64px;height:64px"><use href="#mark"/></svg>
+      </div>
+      <div class="body">
+        <h3>المنصة والتطبيقات</h3>
+        <p>تطبيق العميل بعشر شاشات، تطبيق السائق بست شاشات، لوحة التشغيل، وقسم المنظومة. فيه زر «تشغيل الرحلة كاملة» لعرض تلقائي.</p>
+        <div class="go">افتح المنصة ←</div>
+      </div>
+    </a>
+    <a class="card" href="brand.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#F5B72C,#B98A00)">
+        <b style="color:#08241A">الهوية البصرية</b>
+      </div>
+      <div class="body">
+        <h3>دليل الهوية</h3>
+        <p>الاسم والشعار بنسخه الأربع، الألوان مع نسب التباين، الخطوط، قواعد الاستعمال، ونبرة الكلام.</p>
+        <div class="go">افتح الدليل ←</div>
+      </div>
+    </a>
+    <a class="card" href="logo-directions.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#1B8E96,#0E6B71)">
+        <b style="color:#fff">اتجاهات الشعار</b>
+      </div>
+      <div class="body">
+        <h3>مقارنة الشعارات</h3>
+        <p>الاتجاهات الأربعة مع تقييم كل واحد. الاتجاه المعتمد: <b>الدبوس والهلال</b>.</p>
+        <div class="go">افتح المقارنة ←</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="steps">
+    <h3>كيف تفتح الحزمة خطوة بخطوة</h3>
+    <ol>
+      <li><b>فك الضغط أولًا.</b> لا تفتح الملفات من داخل الملف المضغوط مباشرة — انقر بالزر الأيمن على الملف واختر «استخراج الكل» أو <span class="mono">Extract All</span>، ثم افتح المجلد الناتج.</li>
+      <li><b>انقر نقرًا مزدوجًا على</b> <code>index.html</code> — هذه الصفحة نفسها. ستفتح في متصفحك.</li>
+      <li>ومن هنا اضغط على البطاقة التي تريدها. أو افتح <code>platform.html</code> مباشرة.</li>
+      <li>إن فُتح الملف في محرر نصوص بدل المتصفح: انقر بالزر الأيمن ← <span class="mono">Open with</span> ← اختر متصفحًا.</li>
+    </ol>
+  </div>
+
+  <div class="warn">
+    <b>السبب الأشهر لعدم الفتح:</b> محاولة تشغيل الصفحات وهي ما تزال داخل الملف المضغوط. ويندوز يعرض محتوى الملف المضغوط كأنه مجلد عادي، لكن الصفحات لا تجد ملفاتها المجاورة فتظهر فارغة أو لا تفتح. فكّ الضغط أولًا ويُحلّ الأمر.
+  </div>
+</div></section>
+
+<section style="padding-top:0"><div class="wrap">
+  <div class="kick">ALSO IN THIS FOLDER</div>
+  <h2>بقية الملفات</h2>
+  <p class="sub">هذه تُفتح ببرامج المكتب المعتادة، وليست جزءًا من العرض التفاعلي.</p>
+  <div class="files">
+    <div class="file"><span class="ext">SVG</span><div><b>مجلد logos</b><span>الشعار المعتمد بصيغ SVG وPNG: الرمز، أيقونة التطبيق، القفل الأفقي، والنسخ أحادية اللون.</span></div></div>
+    <div class="file"><span class="ext">TXT</span><div><b>README.txt</b><span>نفس تعليمات الفتح في ملف نصي بسيط.</span></div></div>
+    <div class="file"><span class="ext">DOCX</span><div><b>الوثائق</b><span>خطة العمل، المواصفات التقنية، خطة التشغيل — تُفتح ببرنامج Word (مرسلة في المحادثة).</span></div></div>
+    <div class="file"><span class="ext">XLSX</span><div><b>النموذج المالي</b><span>يُفتح ببرنامج Excel. عدّل الخلايا الصفراء وسيُعاد الحساب كاملًا (مرسل في المحادثة).</span></div></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <svg style="width:32px;height:32px"><use href="#mark"/></svg>
+  <span>ريمڤو — حزمة العرض · الشعار المعتمد: الدبوس والهلال</span>
+  <span class="mono" style="margin-inline-start:auto;color:var(--sun);letter-spacing:2px;font-size:11px">MOVE · DELIVER · MAURITANIA</span>
+</div></footer>
+</body>
+</html>

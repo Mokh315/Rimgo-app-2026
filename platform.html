@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ريمڤو RIMGO — منصة التنقل والتوصيل في موريتانيا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#08241A;        /* ليل الصحراء */
+  --acacia:#0B6B45;       /* أخضر الساحل */
+  --acacia-lite:#12905C;
+  --sun:#F5B72C;          /* ذهب */
+  --sun-deep:#E09A00;
+  --atlantic:#1B8E96;     /* أطلسي */
+  --dune:#F2E7D3;         /* رمل */
+  --dune-2:#FAF4E9;
+  --ink:#0C1512;
+  --muted:#6B7C73;
+  --line:rgba(11,107,69,.16);
+  --shadow:0 24px 60px -28px rgba(8,36,26,.55);
+  --ar:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --disp:"Tajawal","IBM Plex Sans Arabic",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;overflow-x:hidden;background:var(--dune-2);color:var(--ink);font-family:var(--ar);font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--disp);line-height:1.25;margin:0}
+a{color:inherit}
+.wrap{width:min(1180px,92vw);margin-inline:auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;direction:ltr;display:inline-block}
+
+/* ————— شريط علوي ————— */
+.topbar{position:sticky;top:0;z-index:60;background:rgba(8,36,26,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(245,183,44,.18)}
+.topbar .wrap{display:flex;align-items:center;gap:18px;height:64px}
+.brandline{display:flex;align-items:center;gap:10px;color:var(--dune)}
+.brandline svg{width:30px;height:30px}
+.brandline b{font-family:var(--disp);font-weight:900;font-size:20px;letter-spacing:.5px}
+.brandline span{font-size:11px;color:rgba(242,231,211,.55);font-family:var(--mono);letter-spacing:2px}
+.topnav{margin-inline-start:auto;display:flex;gap:4px;background:rgba(255,255,255,.06);padding:4px;border-radius:999px}
+.topnav button{font-family:var(--ar);font-size:13.5px;font-weight:600;color:rgba(242,231,211,.7);background:none;border:0;padding:8px 16px;border-radius:999px;cursor:pointer;transition:.2s}
+.topnav button:hover{color:var(--dune)}
+.topnav button[aria-selected="true"]{background:var(--sun);color:var(--night)}
+.topnav button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+
+/* ————— الواجهة الافتتاحية ————— */
+.hero{position:relative;background:var(--night);color:var(--dune);overflow:hidden;padding:74px 0 96px}
+.dunes{position:absolute;inset:0;opacity:.5;pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:3.5px;color:var(--sun);text-transform:uppercase;direction:ltr;text-align:right}
+.hero h1{font-size:clamp(38px,5.4vw,66px);font-weight:900;margin:14px 0 10px;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:var(--sun)}
+.hero .tag{font-family:var(--disp);font-size:clamp(19px,2.2vw,26px);font-weight:700;color:var(--dune)}
+.hero p.lede{color:rgba(242,231,211,.72);max-width:52ch;margin:16px 0 26px;font-size:16px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1px solid rgba(245,183,44,.32);color:var(--sun);border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:600}
+.heroart{display:flex;justify-content:center}
+.iconcard{width:190px;height:190px;border-radius:44px;background:linear-gradient(135deg,var(--acacia-lite),#05301F);display:grid;place-items:center;box-shadow:0 40px 80px -30px rgba(0,0,0,.7);position:relative}
+.iconcard svg{width:112px;height:112px}
+.iconcard::after{content:"";position:absolute;inset:0;border-radius:44px;border:1px solid rgba(245,183,44,.25)}
+
+/* خط الرحلة — العنصر المميّز */
+.routeline{position:absolute;inset-inline:0;bottom:0;height:64px;pointer-events:none}
+
+/* ————— الأقسام ————— */
+.pane{display:none;padding:56px 0 90px}
+.pane.on{display:block}
+.sechead{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:8px}
+.sechead h2{font-size:30px;font-weight:800}
+.sechead .kicker{font-family:var(--mono);font-size:11px;letter-spacing:2.5px;color:var(--acacia);direction:ltr}
+.secsub{color:var(--muted);max-width:70ch;margin:6px 0 30px}
+
+.stage{display:grid;grid-template-columns:210px auto 1fr;gap:34px;align-items:start}
+.rail{position:sticky;top:82px;display:flex;flex-direction:column;gap:5px}
+.rail .rt{font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;direction:ltr}
+.rail button{display:flex;align-items:center;gap:9px;text-align:right;font-family:var(--ar);font-size:13.5px;font-weight:500;color:var(--ink);background:none;border:0;border-inline-end:2px solid transparent;padding:8px 12px 8px 8px;cursor:pointer;border-radius:0 8px 8px 0;transition:.18s}
+.rail button i{width:20px;height:20px;flex:0 0 20px;border-radius:6px;background:var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:10px;font-style:normal;color:var(--acacia)}
+.rail button:hover{background:rgba(11,107,69,.06)}
+.rail button[aria-current="true"]{background:rgba(11,107,69,.09);border-inline-end-color:var(--acacia);font-weight:700}
+.rail button[aria-current="true"] i{background:var(--acacia);color:#fff}
+.rail button:focus-visible{outline:2px solid var(--acacia);outline-offset:1px}
+
+/* ————— هيكل الهاتف ————— */
+.phone{width:330px;height:690px;border-radius:44px;background:#0b0f0d;padding:11px;box-shadow:var(--shadow),0 0 0 1px rgba(0,0,0,.12);position:relative;flex:0 0 auto}
+.phone::before{content:"";position:absolute;top:22px;left:50%;transform:translateX(-50%);width:96px;height:26px;background:#0b0f0d;border-radius:14px;z-index:6}
+.viewport{width:100%;height:100%;border-radius:34px;overflow:hidden;background:var(--dune-2);position:relative}
+.scr{position:absolute;inset:0;display:none;flex-direction:column;background:var(--dune-2);animation:fade .32s ease}
+.scr.on{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.statusbar{height:46px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 20px 4px;font-family:var(--mono);font-size:11px;color:var(--ink);flex:0 0 auto;z-index:5}
+.statusbar .sigs{display:flex;gap:4px;align-items:center}
+.statusbar .sigs b{display:block;width:3px;background:currentColor;border-radius:1px}
+.scr.dark{background:var(--night);color:var(--dune)}
+.scr.dark .statusbar{color:var(--dune)}
+
+.pbody{flex:1;overflow:auto;padding:0 20px 18px;scrollbar-width:thin}
+.pbody::-webkit-scrollbar{width:0}
+.ptitle{font-family:var(--disp);font-weight:800;font-size:21px;margin:6px 0 2px}
+.psub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+.scr.dark .psub{color:rgba(242,231,211,.6)}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:14px;padding:14px;font-family:var(--ar);font-size:14.5px;font-weight:700;cursor:pointer;transition:.18s}
+.btn.primary{background:var(--acacia);color:#fff}
+.btn.primary:hover{background:var(--acacia-lite)}
+.btn.gold{background:var(--sun);color:var(--night)}
+.btn.ghost{background:transparent;color:var(--acacia);border:1.5px solid var(--line)}
+.btn:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+.pfoot{padding:12px 20px 20px;flex:0 0 auto}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+.scr.dark .card{background:rgba(255,255,255,.06);border-color:rgba(245,183,44,.14)}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.avatar{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--acacia),#05301F);color:var(--sun);display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:16px;flex:0 0 auto}
+.chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:rgba(11,107,69,.1);color:var(--acacia)}
+.chip.gold{background:rgba(245,183,44,.18);color:#8A6100}
+.chip.sea{background:rgba(27,142,150,.14);color:#0E6B71}
+
+/* الخريطة */
+.map{position:absolute;inset:0}
+.map svg{width:100%;height:100%;display:block}
+.sheet{position:absolute;inset-inline:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;padding:10px 18px 20px;box-shadow:0 -18px 40px -24px rgba(8,36,26,.5);z-index:4}
+.grabber{width:38px;height:4px;border-radius:2px;background:#D9D2C4;margin:0 auto 12px}
+
+.svc{display:flex;gap:8px;margin:2px 0 14px}
+.svc button{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 6px;cursor:pointer;font-family:var(--ar);font-size:11.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:6px;transition:.18s}
+.svc button svg{width:26px;height:26px}
+.svc button[aria-pressed="true"]{border-color:var(--acacia);background:rgba(11,107,69,.06);color:var(--acacia)}
+.svc button:focus-visible{outline:2px solid var(--acacia);outline-offset:1px}
+
+.opt{display:flex;align-items:center;gap:12px;padding:11px;border:1.5px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer;background:#fff;width:100%;text-align:start;font-family:var(--ar);transition:.18s}
+.opt[aria-pressed="true"]{border-color:var(--acacia);background:rgba(11,107,69,.05)}
+.opt .nm{font-weight:700;font-size:13.5px}
+.opt .dt{font-size:11.5px;color:var(--muted)}
+.opt .pr{margin-inline-start:auto;text-align:end}
+.opt .pr b{font-family:var(--mono);font-size:15px}
+.opt .pr small{display:block;font-size:10px;color:var(--muted)}
+
+.field{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:9px}
+.field .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.field input{border:0;outline:0;font-family:var(--ar);font-size:13.5px;width:100%;background:none;color:inherit}
+.legend{display:flex;flex-direction:column;gap:2px}
+
+.tabbar{display:flex;justify-content:space-around;padding:10px 8px 16px;border-top:1px solid var(--line);background:#fff;flex:0 0 auto}
+.tabbar span{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--muted);font-weight:600}
+.tabbar span svg{width:21px;height:21px}
+.tabbar span.act{color:var(--acacia)}
+
+/* لوح الشرح */
+.notes{position:sticky;top:82px}
+.notes h3{font-size:19px;font-weight:800;margin-bottom:4px}
+.notes .nsub{color:var(--muted);font-size:13px;margin-bottom:18px}
+.note{display:none}
+.note.on{display:block;animation:fade .3s ease}
+.note ul{list-style:none;padding:0;margin:0}
+.note li{position:relative;padding-inline-start:22px;margin-bottom:11px;font-size:13.8px;color:#354740}
+.note li::before{content:"";position:absolute;inset-inline-start:0;top:9px;width:9px;height:9px;border-radius:3px;background:var(--sun)}
+.note li b{color:var(--ink)}
+.techbox{margin-top:20px;background:var(--night);color:var(--dune);border-radius:16px;padding:16px 18px}
+.techbox .t{font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--sun);direction:ltr;margin-bottom:8px}
+.techbox code{font-family:var(--mono);font-size:11.5px;color:rgba(242,231,211,.85);direction:ltr;display:block;line-height:1.9}
+
+.playbar{display:flex;align-items:center;gap:10px;margin-top:14px}
+.playbar button{font-family:var(--ar);font-size:12.5px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--acacia);border-radius:999px;padding:7px 15px;cursor:pointer}
+.playbar button:hover{background:rgba(11,107,69,.06)}
+.playbar .cnt{font-family:var(--mono);font-size:11px;color:var(--muted);direction:ltr}
+
+@media (max-width:1080px){
+  .hero .wrap{grid-template-columns:1fr}
+  .heroart{order:-1;justify-content:flex-start}
+  .stage{grid-template-columns:1fr;gap:24px}
+  .rail{position:static;flex-direction:row;overflow:auto;padding-bottom:6px}
+  .rail .rt{display:none}
+  .rail button{border-inline-end:0;border-bottom:2px solid transparent;border-radius:8px 8px 0 0;white-space:nowrap}
+  .rail button[aria-current="true"]{border-bottom-color:var(--acacia)}
+  .notes{position:static}
+  .phone{margin-inline:auto}
+}
+@media (max-width:700px){
+  .topbar .wrap{height:auto;padding:9px 0;flex-wrap:wrap;gap:10px}
+  .topnav{margin-inline-start:0;width:100%;overflow-x:auto;justify-content:flex-start;border-radius:12px}
+  .topnav button{white-space:nowrap;font-size:12.5px;padding:7px 13px}
+  .hero{padding:42px 0 62px}
+  .sechead h2{font-size:24px}
+  .phone{width:100%;max-width:320px;height:660px}
+  .desk{border-radius:14px}
+  .deskmain{padding:14px}
+  .panel{padding:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="gold" x1="20" y1="112" x2="98" y2="16" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#E09A00"/><stop offset=".55" stop-color="#F5B72C"/><stop offset="1" stop-color="#FFE694"/>
+  </linearGradient>
+  <symbol id="mark" viewBox="0 0 120 120">
+    <path fill="url(#gold)" fill-rule="evenodd" d="M60 110 C43 87, 28 73, 28 52 A32 32 0 1 1 92 52 C92 73 77 87 60 110 Z M52.93 30.23 A21 21 0 1 0 79.77 57.07 A19.5 19.5 0 0 1 52.93 30.23 Z M73.50 31.00 L75.48 35.77 L80.63 36.18 L76.71 39.54 L77.91 44.57 L73.50 41.88 L69.09 44.57 L70.29 39.54 L66.37 36.18 L71.52 35.77 Z"/>
+  </symbol>
+</defs></svg>
+
+<div class="topbar"><div class="wrap">
+  <div class="brandline"><svg><use href="#mark"/></svg><div><b>ريمڤو</b> <span>RIMGO</span></div></div>
+  <nav class="topnav" role="tablist" aria-label="أقسام المنصة">
+    <button role="tab" aria-selected="true" data-pane="customer">تطبيق العميل</button>
+    <button role="tab" aria-selected="false" data-pane="driver">تطبيق السائق</button>
+    <button role="tab" aria-selected="false" data-pane="admin">لوحة التشغيل</button>
+    <button role="tab" aria-selected="false" data-pane="system">المنظومة</button>
+  </nav>
+</div></div>
+
+<header class="hero">
+  <svg class="dunes" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 300 C 220 250 360 340 560 312 C 760 284 900 210 1120 246 C 1280 272 1360 320 1440 300 L1440 420 L0 420Z" fill="#0B3125"/>
+    <path d="M0 350 C 260 316 420 384 640 360 C 880 334 1040 300 1240 330 C 1340 345 1400 366 1440 356 L1440 420 L0 420Z" fill="#0D3A2B"/>
+    <g stroke="rgba(245,183,44,.10)" fill="none">
+      <path d="M0 268 C 240 226 380 316 580 286"/><path d="M0 240 C 250 196 390 292 600 260"/>
+      <path d="M840 214 C 1040 190 1200 236 1440 214"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Nouakchott · Nouadhibou · Rosso · Atar</div>
+      <h1>ريم<em>ڤو</em></h1>
+      <div class="tag">نوصّلك… ونوصّل لك.</div>
+      <p class="lede">منصة موريتانية واحدة تجمع نقل الركاب بالسيارات والدراجات، وتوصيل الطلبات من المطاعم والمتاجر، وشحن البضائع داخل المدن — مبنية على الهاتف البسيط والدفع بالمحفظة الموريتانية، وتعمل حتى مع ضعف الشبكة.</p>
+      <div class="pills">
+        <span class="pill">عربية · Français · حسانية</span>
+        <span class="pill">بنكيلي · مصرفي · سداد · نقدًا</span>
+        <span class="pill">وضع الشبكة الضعيفة</span>
+        <span class="pill">تسعير شفاف قبل الانطلاق</span>
+      </div>
+    </div>
+    <div class="heroart"><div class="iconcard"><svg><use href="#mark"/></svg></div></div>
+  </div>
+  <svg class="routeline" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M-20 52 C 300 10 520 70 800 34 C 1040 4 1240 52 1460 26" fill="none" stroke="#F5B72C" stroke-width="2" stroke-dasharray="9 11" opacity=".5"/>
+  </svg>
+</header>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="citymap" viewBox="0 0 330 690" preserveAspectRatio="xMidYMid slice">
+  <rect width="330" height="690" fill="#EDE3D1"/>
+  <rect x="0" y="0" width="34" height="690" fill="#BFDCDA"/>
+  <path d="M34 0 C 26 120 42 260 30 400 C 22 520 38 600 34 690" stroke="#9FC9C6" stroke-width="6" fill="none"/>
+  <g fill="#E3D7C1">
+    <rect x="52" y="46" width="70" height="58" rx="4"/><rect x="140" y="30" width="86" height="74" rx="4"/>
+    <rect x="244" y="52" width="66" height="52" rx="4"/><rect x="52" y="150" width="60" height="76" rx="4"/>
+    <rect x="132" y="150" width="94" height="76" rx="4"/><rect x="246" y="150" width="64" height="76" rx="4"/>
+    <rect x="52" y="272" width="74" height="86" rx="4"/><rect x="146" y="272" width="80" height="52" rx="4"/>
+    <rect x="246" y="272" width="64" height="86" rx="4"/><rect x="52" y="404" width="66" height="70" rx="4"/>
+    <rect x="138" y="404" width="88" height="70" rx="4"/><rect x="246" y="404" width="64" height="70" rx="4"/>
+    <rect x="52" y="520" width="80" height="90" rx="4"/><rect x="152" y="520" width="74" height="60" rx="4"/>
+    <rect x="246" y="520" width="64" height="90" rx="4"/>
+  </g>
+  <g fill="#CFE0C2"><rect x="146" y="334" width="80" height="24" rx="6"/><rect x="152" y="592" width="74" height="30" rx="6"/></g>
+  <g stroke="#FBF7EF" stroke-width="11" stroke-linecap="round">
+    <path d="M40 122 H326"/><path d="M40 244 H326"/><path d="M40 380 H326"/><path d="M40 496 H326"/><path d="M40 630 H326"/>
+    <path d="M40 8 V682"/><path d="M132 8 V682"/><path d="M236 8 V682"/><path d="M320 8 V682"/>
+  </g>
+  <g stroke="#F5EDDF" stroke-width="5" stroke-linecap="round">
+    <path d="M40 60 H326"/><path d="M40 184 H326"/><path d="M40 312 H326"/><path d="M40 560 H326"/>
+    <path d="M86 8 V682"/><path d="M184 8 V682"/><path d="M282 8 V682"/>
+  </g>
+  <path d="M40 660 L330 40" stroke="#FFF9EE" stroke-width="13" stroke-linecap="round"/>
+  <g font-family="IBM Plex Sans Arabic, sans-serif" font-size="9" fill="#98A79B">
+    <text x="60" y="42" >السبخة</text><text x="252" y="140">تفرغ زينة</text>
+    <text x="150" y="266">لكصر</text><text x="60" y="396">الميناء</text>
+    <text x="252" y="514">عرفات</text><text x="150" y="588">دار النعيم</text>
+  </g>
+</symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M5 11l1.5-4.5A2 2 0 018.4 5h7.2a2 2 0 011.9 1.5L19 11m-14 0h14m-14 0a2 2 0 00-2 2v3h2m14-5a2 2 0 012 2v3h-2m-14 0h14m-14 0v2h3v-2m11 0v2h3v-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="13.5" r="1" fill="currentColor"/><circle cx="16.5" cy="13.5" r="1" fill="currentColor"/></symbol>
+<symbol id="i-moto" viewBox="0 0 24 24"><circle cx="5" cy="16.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="16.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 16.5h5l4-6h-3m3 0h3l2 6M9 7h3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.5 8h13l-1 11.5a1.5 1.5 0 01-1.5 1.4H8a1.5 1.5 0 01-1.5-1.4L5.5 8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 9V6.5a3 3 0 016 0V9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3l8 4v10l-8 4-8-4V7l8-4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v10" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-6.5 8 6.5v8a1.5 1.5 0 01-1.5 1.5h-13A1.5 1.5 0 014 19v-8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="13" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 10h17" stroke="currentColor" stroke-width="1.6"/><circle cx="16.5" cy="14.5" r="1.3" fill="currentColor"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.8 20c.7-3.8 3.7-5.8 7.2-5.8s6.5 2 7.2 5.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 2.6v5.6c0 4.4-2.9 8.1-7 9.8-4.1-1.7-7-5.4-7-9.8V5.6L12 3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12.2l2.1 2.1 4-4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<main>
+<!-- ══════════ تطبيق العميل ══════════ -->
+<section class="pane on" id="customer"><div class="wrap">
+  <div class="sechead"><span class="kicker">01 / RIDER APP</span><h2>تطبيق العميل</h2></div>
+  <p class="secsub">رحلة كاملة من فتح التطبيق إلى تقييم السائق. صُمّمت الشاشات لهاتف متوسط المواصفات وشبكة ثلاثية الجيل، بلغة عربية أولًا وخيار فرنسي كامل.</p>
+
+  <div class="stage">
+    <nav class="rail" id="railC" aria-label="شاشات تطبيق العميل">
+      <div class="rt">SCREENS</div>
+      <button aria-current="true" data-s="c1"><i>1</i>الترحيب واللغة</button>
+      <button data-s="c2"><i>2</i>الدخول برقم الهاتف</button>
+      <button data-s="c3"><i>3</i>الرئيسية والخدمات</button>
+      <button data-s="c4"><i>4</i>تحديد الوجهة</button>
+      <button data-s="c5"><i>5</i>المركبة والسعر</button>
+      <button data-s="c6"><i>6</i>مطابقة السائق</button>
+      <button data-s="c7"><i>7</i>تتبّع الرحلة</button>
+      <button data-s="c8"><i>8</i>الدفع والتقييم</button>
+      <button data-s="c9"><i>9</i>توصيل الطلبات</button>
+      <button data-s="c10"><i>10</i>المحفظة والحساب</button>
+    </nav>
+
+    <div class="phone"><div class="viewport" id="vpC">
+
+      <!-- 1 الترحيب -->
+      <div class="scr dark on" id="c1">
+        <div class="statusbar"><span>٩:٤١</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٨٤٪</span></span></div>
+        <div class="pbody" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+          <svg style="width:96px;height:96px;margin-bottom:18px"><use href="#mark"/></svg>
+          <h3 style="font-size:30px;font-weight:900">ريمڤو</h3>
+          <div style="color:var(--sun);font-weight:700;margin-bottom:8px">نوصّلك… ونوصّل لك</div>
+          <p class="psub" style="max-width:24ch">اختر لغتك للمتابعة — يمكنك تغييرها في أي وقت</p>
+          <div style="width:100%">
+            <button class="opt" style="background:rgba(255,255,255,.07);border-color:rgba(245,183,44,.3);color:var(--dune)" aria-pressed="true"><span class="avatar" style="border-radius:12px;font-size:13px">ع</span><span class="legend"><span class="nm">العربية</span><span class="dt" style="color:rgba(242,231,211,.55)">اللغة الافتراضية</span></span></button>
+            <button class="opt" style="background:rgba(255,255,255,.03);border-color:rgba(245,183,44,.14);color:var(--dune)"><span class="avatar" style="border-radius:12px;font-size:13px;background:rgba(255,255,255,.08)">Fr</span><span class="legend"><span class="nm">Français</span><span class="dt" style="color:rgba(242,231,211,.55)">Interface complète</span></span></button>
+          </div>
+        </div>
+        <div class="pfoot"><button class="btn gold" data-go="c2">متابعة</button></div>
+      </div>
+
+      <!-- 2 الدخول -->
+      <div class="scr" id="c2">
+        <div class="statusbar"><span>٩:٤١</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٨٤٪</span></span></div>
+        <div class="pbody">
+          <h3 class="ptitle">ما رقم هاتفك؟</h3>
+          <p class="psub">نرسل لك رمزًا من أربعة أرقام للتحقق. يعمل مع موريتل وشنقيتل وماتيل.</p>
+          <div class="field"><span class="mono" style="font-weight:600;color:var(--acacia)">+222</span><input value="4x xx xx xx" aria-label="رقم الهاتف"></div>
+          <div class="card" style="margin-top:14px;background:rgba(245,183,44,.09);border-color:rgba(245,183,44,.3)">
+            <div class="row" style="align-items:flex-start"><svg style="width:20px;height:20px;color:var(--sun-deep);flex:0 0 20px"><use href="#i-shield"/></svg>
+            <div style="font-size:12.5px;color:#6B5310">رقمك لا يظهر للسائق. الاتصال يمر عبر رقم وسيط داخل التطبيق.</div></div>
+          </div>
+          <div style="display:flex;gap:9px;justify-content:center;margin:26px 0 6px" dir="ltr">
+            <span class="mono" style="width:52px;height:60px;border:1.5px solid var(--acacia);border-radius:14px;display:grid;place-items:center;font-size:24px;font-weight:600">7</span>
+            <span class="mono" style="width:52px;height:60px;border:1.5px solid var(--line);border-radius:14px;display:grid;place-items:center;font-size:24px;font-weight:600">2</span>
+            <span class="mono" style="width:52px;height:60px;border:1.5px solid var(--line);border-radius:14px;display:grid;place-items:center;font-size:24px;color:#C9C2B4">–</span>
+            <span class="mono" style="width:52px;height:60px;border:1.5px solid var(--line);border-radius:14px;display:grid;place-items:center;font-size:24px;color:#C9C2B4">–</span>
+          </div>
+          <div style="text-align:center;font-size:12px;color:var(--muted)">لم يصلك الرمز؟ <b style="color:var(--acacia)">إعادة الإرسال بعد <span class="mono">٠٠:٢٤</span></b></div>
+        </div>
+        <div class="pfoot"><button class="btn primary" data-go="c3">تأكيد الرمز</button></div>
+      </div>
+
+      <!-- 3 الرئيسية -->
+      <div class="scr" id="c3">
+        <div class="map"><svg><use href="#citymap"/></svg></div>
+        <div class="statusbar" style="position:relative;z-index:5"><span>٩:٤١</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٨٤٪</span></span></div>
+        <div style="position:relative;z-index:5;padding:4px 18px;display:flex;align-items:center;gap:10px">
+          <span class="avatar" style="width:38px;height:38px;font-size:14px">م</span>
+          <div style="background:#fff;border-radius:12px;padding:6px 12px;box-shadow:var(--shadow);font-size:12px;font-weight:600">مساء الخير، محمد 👋</div>
+        </div>
+        <div style="flex:1"></div>
+        <div class="sheet">
+          <div class="grabber"></div>
+          <div class="svc" role="group" aria-label="اختر الخدمة">
+            <button aria-pressed="true"><svg><use href="#i-car"/></svg>سيارة</button>
+            <button><svg><use href="#i-moto"/></svg>دراجة</button>
+            <button><svg><use href="#i-bag"/></svg>طلبات</button>
+            <button><svg><use href="#i-box"/></svg>شحن</button>
+          </div>
+          <button class="opt" data-go="c4" style="border-color:var(--acacia)"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--sun)"></span><span class="legend"><span class="nm">إلى أين تريد الذهاب؟</span><span class="dt">اكتب الوجهة أو اخترها من الخريطة</span></span></button>
+          <div class="row" style="gap:8px;margin-top:4px">
+            <button class="opt" style="margin:0;padding:9px 10px"><svg style="width:18px;height:18px;color:var(--acacia)"><use href="#i-home"/></svg><span class="legend"><span class="nm" style="font-size:12.5px">المنزل</span><span class="dt" style="font-size:10.5px">تفرغ زينة</span></span></button>
+            <button class="opt" style="margin:0;padding:9px 10px"><svg style="width:18px;height:18px;color:var(--acacia)"><use href="#i-clock"/></svg><span class="legend"><span class="nm" style="font-size:12.5px">سوق العاصمة</span><span class="dt" style="font-size:10.5px">آخر رحلة</span></span></button>
+          </div>
+        </div>
+        <div class="tabbar" style="position:relative;z-index:5">
+          <span class="act"><svg><use href="#i-home"/></svg>الرئيسية</span>
+          <span><svg><use href="#i-clock"/></svg>رحلاتي</span>
+          <span><svg><use href="#i-wallet"/></svg>المحفظة</span>
+          <span><svg><use href="#i-user"/></svg>حسابي</span>
+        </div>
+      </div>
+
+      <!-- 4 الوجهة -->
+      <div class="scr" id="c4">
+        <div class="statusbar"><span>٩:٤٢</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٨٤٪</span></span></div>
+        <div class="pbody">
+          <h3 class="ptitle">إلى أين؟</h3>
+          <div class="field" style="margin-top:12px"><span class="dot" style="background:var(--acacia)"></span><input value="موقعي الحالي — شارع جمال عبد الناصر" aria-label="نقطة الانطلاق"></div>
+          <div class="field" style="border-color:var(--acacia)"><span class="dot" style="background:var(--sun)"></span><input value="مطار أم التونسي الدولي" aria-label="الوجهة"></div>
+          <div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:var(--muted);margin:18px 0 8px;direction:ltr">SUGGESTIONS</div>
+          <button class="opt" data-go="c5"><svg style="width:18px;height:18px;color:var(--muted)"><use href="#i-clock"/></svg><span class="legend"><span class="nm">مطار أم التونسي الدولي</span><span class="dt">طريق نواذيبو · ١٤ كم</span></span></button>
+          <button class="opt" data-go="c5"><svg style="width:18px;height:18px;color:var(--muted)"><use href="#i-clock"/></svg><span class="legend"><span class="nm">مستشفى الصداقة</span><span class="dt">لكصر · ٣.٢ كم</span></span></button>
+          <button class="opt" data-go="c5"><svg style="width:18px;height:18px;color:var(--muted)"><use href="#i-clock"/></svg><span class="legend"><span class="nm">جامعة نواكشوط العصرية</span><span class="dt">توجنين · ٧.٨ كم</span></span></button>
+          <button class="opt" data-go="c5"><svg style="width:18px;height:18px;color:var(--muted)"><use href="#i-clock"/></svg><span class="legend"><span class="nm">شاطئ الصيادين</span><span class="dt">الميناء · ٥.١ كم</span></span></button>
+          <div class="card" style="margin-top:6px;background:rgba(27,142,150,.07);border-color:rgba(27,142,150,.25);font-size:12.5px;color:#0E6B71">
+            لا يوجد عنوان؟ ثبّت الدبوس على الخريطة وأضف وصفًا صوتيًا للسائق — مفيد في الأحياء غير المرقّمة.
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 المركبة والسعر -->
+      <div class="scr" id="c5">
+        <div class="map"><svg><use href="#citymap"/></svg>
+          <svg viewBox="0 0 330 690" style="position:absolute;inset:0">
+            <path d="M70 560 C 120 470 150 400 210 320 C 250 268 268 190 250 120" fill="none" stroke="#08241A" stroke-width="7" stroke-linecap="round" opacity=".18"/>
+            <path d="M70 560 C 120 470 150 400 210 320 C 250 268 268 190 250 120" fill="none" stroke="#F5B72C" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="1 12" stroke-linejoin="round"/>
+            <circle cx="70" cy="560" r="8" fill="#0B6B45" stroke="#fff" stroke-width="3"/>
+            <path d="M250 100 c 9 0 16 7 16 16 0 12-16 26-16 26s-16-14-16-26c0-9 7-16 16-16z" fill="#F5B72C" stroke="#08241A" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="statusbar" style="position:relative;z-index:5"><span>٩:٤٣</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٨٣٪</span></span></div>
+        <div style="flex:1"></div>
+        <div class="sheet">
+          <div class="grabber"></div>
+          <div class="row between" style="margin-bottom:10px"><b style="font-size:14px">اختر مركبتك</b><span class="chip">١٤ كم · ٢٢ دقيقة</span></div>
+          <button class="opt" aria-pressed="true"><svg style="width:26px;height:26px;color:var(--acacia)"><use href="#i-car"/></svg><span class="legend"><span class="nm">ريمڤو سيارة</span><span class="dt">٤ ركاب · مكيّفة</span></span><span class="pr"><b>٤٥٠</b><small>أوقية</small></span></button>
+          <button class="opt"><svg style="width:26px;height:26px;color:var(--sun-deep)"><use href="#i-moto"/></svg><span class="legend"><span class="nm">ريمڤو دراجة</span><span class="dt">راكب واحد · الأسرع في الزحام</span></span><span class="pr"><b>١٨٠</b><small>أوقية</small></span></button>
+          <button class="opt"><svg style="width:26px;height:26px;color:var(--muted)"><use href="#i-car"/></svg><span class="legend"><span class="nm">ريمڤو عائلي</span><span class="dt">٦ ركاب · أمتعة كبيرة</span></span><span class="pr"><b>٧٢٠</b><small>أوقية</small></span></button>
+          <div class="row between" style="margin:10px 0 12px;font-size:12.5px">
+            <span class="row" style="gap:7px"><svg style="width:17px;height:17px;color:var(--acacia)"><use href="#i-wallet"/></svg><b>بنكيلي</b><span style="color:var(--muted)">·٧٧٤٤</span></span>
+            <span class="chip gold">السعر ثابت — لا يتغير بعد التأكيد</span>
+          </div>
+          <button class="btn primary" data-go="c6">اطلب الآن · ٤٥٠ أوقية</button>
+        </div>
+      </div>
+
+      <!-- 6 المطابقة -->
+      <div class="scr" id="c6">
+        <div class="map"><svg><use href="#citymap"/></svg></div>
+        <div class="statusbar" style="position:relative;z-index:5"><span>٩:٤٣</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٨٣٪</span></span></div>
+        <div style="position:relative;z-index:3;flex:1;display:grid;place-items:center">
+          <div style="position:relative;width:150px;height:150px;display:grid;place-items:center">
+            <span class="ripple"></span><span class="ripple" style="animation-delay:1s"></span>
+            <span style="width:56px;height:56px;border-radius:50%;background:var(--acacia);display:grid;place-items:center;color:var(--sun);z-index:2"><svg style="width:28px;height:28px"><use href="#i-car"/></svg></span>
+          </div>
+        </div>
+        <div class="sheet">
+          <div class="grabber"></div>
+          <div class="row" style="margin-bottom:12px">
+            <span class="avatar" style="width:52px;height:52px;border-radius:16px">أ.و</span>
+            <div class="legend"><b style="font-size:15px">أحمد ولد سيدي</b>
+              <span style="font-size:12px;color:var(--muted)">تويوتا كورولا · بيضاء</span>
+              <span class="row" style="gap:6px;margin-top:3px"><span class="chip gold">★ ٤.٩</span><span class="chip">٨٤٢ رحلة</span></span></div>
+            <div style="margin-inline-start:auto;text-align:center"><div class="mono" style="font-size:13px;font-weight:600;background:var(--night);color:var(--sun);padding:5px 9px;border-radius:8px">NKC 4821</div></div>
+          </div>
+          <div class="row between card" style="padding:11px 13px;margin-bottom:10px">
+            <span style="font-size:13px">يصل خلال</span><b class="mono" style="font-size:19px;color:var(--acacia)">٣ دقائق</b>
+          </div>
+          <div class="row" style="gap:8px">
+            <button class="btn ghost" style="flex:1">اتصال</button>
+            <button class="btn ghost" style="flex:1">رسالة</button>
+            <button class="btn primary" style="flex:1.3" data-go="c7">تتبّع</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 التتبع -->
+      <div class="scr" id="c7">
+        <div class="map"><svg><use href="#citymap"/></svg>
+          <svg viewBox="0 0 330 690" style="position:absolute;inset:0">
+            <path id="trip" d="M70 560 C 120 470 150 400 210 320 C 250 268 268 190 250 120" fill="none" stroke="#0B6B45" stroke-width="6" stroke-linecap="round" opacity=".9"/>
+            <circle cx="70" cy="560" r="7" fill="#fff" stroke="#0B6B45" stroke-width="4"/>
+            <path d="M250 100 c 9 0 16 7 16 16 0 12-16 26-16 26s-16-14-16-26c0-9 7-16 16-16z" fill="#F5B72C" stroke="#08241A" stroke-width="2"/>
+            <g><rect x="-13" y="-9" width="26" height="18" rx="6" fill="#08241A"/><rect x="-9" y="-13" width="18" height="12" rx="5" fill="#08241A"/><circle cx="0" cy="0" r="3" fill="#F5B72C"/>
+              <animateMotion dur="9s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath href="#trip"/></animateMotion>
+            </g>
+          </svg>
+        </div>
+        <div class="statusbar" style="position:relative;z-index:5"><span>٩:٥١</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٨١٪</span></span></div>
+        <div style="position:relative;z-index:5;padding:2px 18px"><div class="card row between" style="padding:9px 13px"><span style="font-size:12.5px;font-weight:600">في الطريق إلى المطار</span><span class="chip">الوصول ٩:٥٨</span></div></div>
+        <div style="flex:1"></div>
+        <div class="sheet">
+          <div class="grabber"></div>
+          <div class="row" style="margin-bottom:12px"><span class="avatar" style="width:46px;height:46px">أ.و</span>
+            <div class="legend"><b style="font-size:14px">أحمد ولد سيدي</b><span style="font-size:11.5px;color:var(--muted)">تويوتا كورولا بيضاء · NKC 4821</span></div>
+            <span class="chip gold" style="margin-inline-start:auto">★ ٤.٩</span></div>
+          <div class="row" style="gap:8px;margin-bottom:10px">
+            <button class="btn ghost" style="flex:1;padding:11px;font-size:13px">شارك رحلتي</button>
+            <button class="btn ghost" style="flex:1;padding:11px;font-size:13px;border-color:rgba(200,60,60,.35);color:#B23A3A">زر الطوارئ</button>
+          </div>
+          <button class="btn gold" data-go="c8">إنهاء الرحلة (عرض توضيحي)</button>
+        </div>
+      </div>
+
+      <!-- 8 الدفع -->
+      <div class="scr" id="c8">
+        <div class="statusbar"><span>٩:٥٩</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٨٠٪</span></span></div>
+        <div class="pbody">
+          <div style="text-align:center;padding:14px 0 6px">
+            <div style="width:64px;height:64px;border-radius:22px;background:rgba(11,107,69,.1);display:grid;place-items:center;margin:0 auto 12px"><svg style="width:32px;height:32px;color:var(--acacia)"><use href="#i-shield"/></svg></div>
+            <h3 class="ptitle">وصلت بالسلامة</h3>
+            <p class="psub">١٤.٢ كم · ٢٤ دقيقة · مطار أم التونسي</p>
+          </div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="row between" style="font-size:13px;margin-bottom:6px"><span>أجرة الرحلة</span><b class="mono">٤٢٠</b></div>
+            <div class="row between" style="font-size:13px;margin-bottom:6px"><span>رسوم الخدمة</span><b class="mono">٣٠</b></div>
+            <div class="row between" style="font-size:13px;margin-bottom:8px;color:var(--acacia)"><span>خصم كود NKC10</span><b class="mono">−٤٥</b></div>
+            <div style="height:1px;background:var(--line);margin-bottom:8px"></div>
+            <div class="row between"><b>الإجمالي</b><b class="mono" style="font-size:20px">٤٠٥ أوقية</b></div>
+          </div>
+          <div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:var(--muted);margin-bottom:8px;direction:ltr">PAYMENT</div>
+          <button class="opt" aria-pressed="true"><span class="avatar" style="width:36px;height:36px;border-radius:11px;font-size:11px">B</span><span class="legend"><span class="nm">بنكيلي</span><span class="dt">•••• ٧٧٤٤</span></span><span class="chip" style="margin-inline-start:auto">افتراضي</span></button>
+          <button class="opt"><span class="avatar" style="width:36px;height:36px;border-radius:11px;font-size:11px;background:#1B8E96">M</span><span class="legend"><span class="nm">مصرفي</span><span class="dt">BMCI</span></span></button>
+          <button class="opt"><span class="avatar" style="width:36px;height:36px;border-radius:11px;font-size:11px;background:#8A6100">₮</span><span class="legend"><span class="nm">نقدًا للسائق</span><span class="dt">٤٠٥ أوقية بالضبط</span></span></button>
+          <div style="text-align:center;margin:18px 0 6px;font-weight:700">كيف كانت رحلتك؟</div>
+          <div style="text-align:center;font-size:30px;letter-spacing:8px;color:var(--sun)">★★★★★</div>
+        </div>
+        <div class="pfoot"><button class="btn primary" data-go="c3">ادفع وقيّم</button></div>
+      </div>
+
+      <!-- 9 التوصيل -->
+      <div class="scr" id="c9">
+        <div class="statusbar"><span>١٢:٢٠</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٧٦٪</span></span></div>
+        <div class="pbody">
+          <div class="row between" style="margin:4px 0 12px"><h3 class="ptitle" style="margin:0">طلبات إلى بابك</h3><span class="chip sea">توصيل خلال ٣٠ د</span></div>
+          <div class="row" style="gap:6px;overflow:auto;padding-bottom:10px">
+            <span class="chip" style="background:var(--acacia);color:#fff;padding:6px 13px">الكل</span>
+            <span class="chip" style="padding:6px 13px">مطاعم</span><span class="chip" style="padding:6px 13px">بقالة</span>
+            <span class="chip" style="padding:6px 13px">صيدلية</span><span class="chip" style="padding:6px 13px">مياه وغاز</span>
+          </div>
+          <div class="card" style="padding:0;overflow:hidden;margin-bottom:11px">
+            <div style="height:88px;background:linear-gradient(135deg,#0B6B45,#12905C);display:grid;place-items:center;color:var(--sun);font-family:var(--disp);font-weight:800;font-size:19px">مطعم الشنقيطي</div>
+            <div style="padding:11px 13px"><div class="row between"><b style="font-size:14px">مطعم الشنقيطي</b><span class="chip gold">★ ٤.٧</span></div>
+            <div style="font-size:12px;color:var(--muted)">مشوي وأرز · تفرغ زينة · التوصيل ٦٠ أوقية</div></div>
+          </div>
+          <div class="card" style="padding:0;overflow:hidden;margin-bottom:11px">
+            <div style="height:88px;background:linear-gradient(135deg,#1B8E96,#0E6B71);display:grid;place-items:center;color:#fff;font-family:var(--disp);font-weight:800;font-size:19px">سوبرماركت لكصر</div>
+            <div style="padding:11px 13px"><div class="row between"><b style="font-size:14px">سوبرماركت لكصر</b><span class="chip gold">★ ٤.٥</span></div>
+            <div style="font-size:12px;color:var(--muted)">بقالة ومنزلية · لكصر · التوصيل ٨٠ أوقية</div></div>
+          </div>
+          <div class="card" style="background:rgba(245,183,44,.1);border-color:rgba(245,183,44,.35)">
+            <div class="row" style="align-items:flex-start;gap:10px"><svg style="width:20px;height:20px;color:var(--sun-deep);flex:0 0 20px"><use href="#i-box"/></svg>
+            <div><b style="font-size:13px">اطلب أي شيء</b><div style="font-size:12px;color:#6B5310">اكتب ما تريد وسنجلبه من أي متجر — حتى لو لم يكن مسجلًا لدينا.</div></div></div>
+          </div>
+        </div>
+        <div class="tabbar"><span><svg><use href="#i-home"/></svg>الرئيسية</span><span class="act"><svg><use href="#i-bag"/></svg>طلبات</span><span><svg><use href="#i-wallet"/></svg>المحفظة</span><span><svg><use href="#i-user"/></svg>حسابي</span></div>
+      </div>
+
+      <!-- 10 المحفظة -->
+      <div class="scr" id="c10">
+        <div class="statusbar"><span>١٨:٠٤</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٦٢٪</span></span></div>
+        <div class="pbody">
+          <h3 class="ptitle">المحفظة</h3>
+          <div style="background:linear-gradient(135deg,#0B6B45,#05301F);border-radius:20px;padding:18px;color:var(--dune);margin:12px 0 16px">
+            <div style="font-size:12px;opacity:.7">الرصيد المتاح</div>
+            <div class="mono" style="font-size:32px;font-weight:600;color:var(--sun)">١٬٢٤٠ <span style="font-size:14px">MRU</span></div>
+            <div class="row" style="gap:8px;margin-top:14px">
+              <button class="btn gold" style="padding:9px;font-size:12.5px">شحن الرصيد</button>
+              <button class="btn ghost" style="padding:9px;font-size:12.5px;color:var(--dune);border-color:rgba(245,183,44,.35)">تحويل</button>
+            </div>
+          </div>
+          <div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:var(--muted);margin-bottom:8px;direction:ltr">RECENT</div>
+          <div class="card row between" style="margin-bottom:8px"><div class="row"><span class="avatar" style="width:36px;height:36px;border-radius:11px"><svg style="width:17px;height:17px"><use href="#i-car"/></svg></span><div class="legend"><b style="font-size:13px">رحلة إلى المطار</b><span style="font-size:11px;color:var(--muted)">اليوم ٩:٥٩</span></div></div><b class="mono" style="color:#B23A3A">−٤٠٥</b></div>
+          <div class="card row between" style="margin-bottom:8px"><div class="row"><span class="avatar" style="width:36px;height:36px;border-radius:11px;background:#1B8E96"><svg style="width:17px;height:17px"><use href="#i-bag"/></svg></span><div class="legend"><b style="font-size:13px">مطعم الشنقيطي</b><span style="font-size:11px;color:var(--muted)">أمس ١٣:٤٠</span></div></div><b class="mono" style="color:#B23A3A">−٩٢٠</b></div>
+          <div class="card row between"><div class="row"><span class="avatar" style="width:36px;height:36px;border-radius:11px;background:var(--sun);color:var(--night)"><svg style="width:17px;height:17px"><use href="#i-wallet"/></svg></span><div class="legend"><b style="font-size:13px">شحن من بنكيلي</b><span style="font-size:11px;color:var(--muted)">أمس ٠٩:١٢</span></div></div><b class="mono" style="color:var(--acacia)">+٢٬٠٠٠</b></div>
+        </div>
+        <div class="tabbar"><span><svg><use href="#i-home"/></svg>الرئيسية</span><span><svg><use href="#i-bag"/></svg>طلبات</span><span class="act"><svg><use href="#i-wallet"/></svg>المحفظة</span><span><svg><use href="#i-user"/></svg>حسابي</span></div>
+      </div>
+
+    </div></div>
+
+    <div class="notes">
+      <h3>لماذا صُمّمت هكذا</h3>
+      <div class="nsub">ملاحظات المنتج لكل شاشة — قرارات مبنية على واقع السوق الموريتاني.</div>
+      <div class="note on" data-n="c1"><ul>
+        <li><b>العربية أولًا</b> مع فرنسية كاملة، وأسماء الخدمات بالحسانية المحكية في الرسائل الصوتية.</li>
+        <li>حزمة التطبيق أقل من <b>١٢ ميغابايت</b> لتناسب الأجهزة والباقات المحدودة.</li>
+        <li>الشعار نفسه يعمل كأيقونة تطبيق: دبوس موقع بداخله هلال ونجمة.</li>
+      </ul></div>
+      <div class="note" data-n="c2"><ul>
+        <li>تسجيل برقم الهاتف فقط — لا حاجة لبريد إلكتروني، ولا بطاقة بنكية للبدء.</li>
+        <li>دعم <b>SMS</b> أولًا مع بديل <b>WhatsApp</b> ومكالمة آلية عند تعطّل الرسائل.</li>
+        <li>ترقيم الهاتف الوسيط يحمي خصوصية الطرفين ويقلّل الرحلات خارج المنصة.</li>
+      </ul></div>
+      <div class="note" data-n="c3"><ul>
+        <li>أربع خدمات في تطبيق واحد: <b>سيارة، دراجة، طلبات، شحن</b> — التبديل بنقرة.</li>
+        <li>الخريطة تعمل بخرائط مفتوحة المصدر (OpenStreetMap) مع تحسين محلي للأحياء.</li>
+        <li><b>وضع الشبكة الضعيفة</b>: إن انقطع الإنترنت يكمل الطلب عبر رسالة نصية.</li>
+      </ul></div>
+      <div class="note" data-n="c4"><ul>
+        <li>معظم أحياء نواكشوط بلا عناوين مرقّمة، لذلك: <b>دبوس + وصف صوتي</b> للسائق.</li>
+        <li>اقتراحات مبنية على العلامات المعروفة (المستشفى، السوق، الجامعة) لا على الشوارع.</li>
+        <li>حفظ الأماكن المتكررة يقلّل زمن الطلب إلى أقل من ١٥ ثانية.</li>
+      </ul></div>
+      <div class="note" data-n="c5"><ul>
+        <li><b>سعر ثابت معروض قبل التأكيد</b> — أهم عامل ثقة مقابل المساومة التقليدية.</li>
+        <li>الدراجة النارية فئة أساسية لا ثانوية: أرخص وأسرع في الأزقة الرملية.</li>
+        <li>تسعير بالأوقية الجديدة (MRU) مع تقريب لأقرب ١٠ لتسهيل الدفع النقدي.</li>
+      </ul></div>
+      <div class="note" data-n="c6"><ul>
+        <li>خوارزمية المطابقة توازن بين <b>القرب</b> و<b>التقييم</b> و<b>عدالة توزيع الدخل</b>.</li>
+        <li>عرض اللوحة والطراز واسم السائق قبل الركوب، مع صورة موثّقة.</li>
+        <li>مهلة قبول ١٥ ثانية ثم إعادة التوجيه لأقرب سائق بديل.</li>
+      </ul></div>
+      <div class="note" data-n="c7"><ul>
+        <li><b>مشاركة الرحلة</b> برابط مباشر عبر واتساب — عادة راسخة محليًا.</li>
+        <li>زر طوارئ يصل بفريق التشغيل وبرقم الحماية المدنية مع إحداثيات مباشرة.</li>
+        <li>تتبّع خفيف يرسل الموقع كل ٨ ثوانٍ لخفض استهلاك الباقة.</li>
+      </ul></div>
+      <div class="note" data-n="c8"><ul>
+        <li>المحافظ المحلية أولًا: <b>بنكيلي، مصرفي، سداد</b>، والنقد يبقى خيارًا كاملًا.</li>
+        <li>فاتورة مفصّلة تُبنى الثقة: أجرة + رسوم خدمة + خصم، بلا مفاجآت.</li>
+        <li>التقييم إلزامي بنجمة واحدة على الأقل قبل الطلب التالي لضمان جودة البيانات.</li>
+      </ul></div>
+      <div class="note" data-n="c9"><ul>
+        <li>«اطلب أي شيء» يفتح السوق كاملًا دون انتظار تسجيل كل المتاجر.</li>
+        <li>فئات مصمّمة للاستهلاك المحلي: <b>مياه وغاز</b> بند رئيسي لا ثانوي.</li>
+        <li>رسوم توصيل معلنة لكل متجر، ومسافة محسوبة من الحي لا من مركز المدينة.</li>
+      </ul></div>
+      <div class="note" data-n="c10"><ul>
+        <li>محفظة داخلية تقلّل تكلفة عمولات الدفع وتسرّع الاسترداد عند الإلغاء.</li>
+        <li>التحويل بين المستخدمين يخدم العائلات التي تطلب لأبنائها.</li>
+        <li>كشف حساب قابل للتصدير — مهم للشركات المشتركة في حساب الأعمال.</li>
+      </ul></div>
+      <div class="techbox"><div class="t">CLIENT STACK</div>
+        <code>Flutter 3 · Dart — Android 6+ / iOS 14+</code>
+        <code>MapLibre GL + OpenStreetMap + Valhalla routing</code>
+        <code>Offline queue · SMS fallback · &lt; 12 MB APK</code>
+      </div>
+      <div class="playbar">
+        <button id="playC">▶ تشغيل الرحلة كاملة</button>
+        <span class="cnt" id="cntC">1 / 10</span>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<style>
+.ripple{position:absolute;width:56px;height:56px;border-radius:50%;border:2px solid var(--acacia);animation:rip 2s ease-out infinite}
+@keyframes rip{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.7);opacity:0}}
+.ringwrap{position:relative;width:74px;height:74px}
+.ringwrap svg{transform:rotate(-90deg)}
+.ringwrap b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:21px;color:var(--sun)}
+.ringwrap circle.p{stroke-dasharray:201;animation:cd 15s linear infinite}
+@keyframes cd{from{stroke-dashoffset:0}to{stroke-dashoffset:201}}
+
+/* لوحة التشغيل */
+.desk{border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
+.deskbar{display:flex;align-items:center;gap:10px;background:var(--night);color:var(--dune);padding:11px 16px}
+.deskbar .dots{display:flex;gap:6px}
+.deskbar .dots i{width:10px;height:10px;border-radius:50%;background:rgba(242,231,211,.25);display:block}
+.deskbar .url{font-family:var(--mono);font-size:11px;color:rgba(242,231,211,.6);background:rgba(255,255,255,.07);padding:4px 12px;border-radius:6px;direction:ltr}
+.deskgrid{display:grid;grid-template-columns:180px 1fr;min-height:560px}
+.side{background:#F7F3EA;border-inline-end:1px solid var(--line);padding:16px 12px}
+.side .lbl{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);margin:14px 8px 6px;direction:ltr}
+.side a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:13px;text-decoration:none;color:#3B4A43}
+.side a.act{background:var(--acacia);color:#fff;font-weight:600}
+.side a svg{width:17px;height:17px}
+.deskmain{padding:20px 22px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi{border:1px solid var(--line);border-radius:14px;padding:13px 15px}
+.kpi .k{font-size:11.5px;color:var(--muted)}
+.kpi .v{font-family:var(--mono);font-size:25px;font-weight:600;line-height:1.3}
+.kpi .d{font-size:11px;font-weight:600}
+.up{color:var(--acacia)} .dn{color:#B23A3A}
+.panels{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+.panel{border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.panel h4{font-size:14.5px;margin-bottom:2px}
+.panel .ph{font-size:11.5px;color:var(--muted);margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:start;font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;color:var(--muted);padding:0 8px 8px 8px;font-weight:500;direction:ltr;white-space:nowrap}
+td{padding:9px 8px;border-top:1px solid var(--line);white-space:nowrap}
+.stat{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+.st-go{background:rgba(11,107,69,.12);color:var(--acacia)}
+.st-wait{background:rgba(245,183,44,.2);color:#8A6100}
+.st-done{background:rgba(27,142,150,.14);color:#0E6B71}
+.legendrow{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:8px}
+.legendrow i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-inline-end:5px}
+
+/* المنظومة */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.blk{border:1px solid var(--line);border-radius:16px;padding:20px;background:#fff}
+.blk .n{font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--sun-deep);direction:ltr;margin-bottom:8px}
+.blk h4{font-size:17px;margin-bottom:8px}
+.blk p{font-size:13.5px;color:#455A51;margin:0}
+.blk ul{margin:8px 0 0;padding-inline-start:18px;font-size:13px;color:#455A51}
+.blk li{margin-bottom:5px}
+.tl{position:relative;padding-inline-start:26px;margin-top:8px}
+.tl::before{content:"";position:absolute;inset-inline-start:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--sun),var(--acacia))}
+.tl .ph2{position:relative;margin-bottom:18px}
+.tl .ph2::before{content:"";position:absolute;inset-inline-start:-24px;top:6px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--acacia)}
+.tl h5{font-family:var(--disp);font-size:15px;margin:0 0 2px}
+.tl .q{font-family:var(--mono);font-size:10.5px;color:var(--sun-deep);direction:ltr}
+.tl p{font-size:13px;color:#455A51;margin:3px 0 0}
+.moneytable{width:100%;border-collapse:collapse;font-size:13.5px}
+.moneytable th{padding:10px 8px;border-bottom:2px solid var(--line)}
+.moneytable td{padding:10px 8px}
+.moneytable tr td:last-child{font-family:var(--mono);text-align:end;direction:ltr}
+@media (max-width:1080px){.kpis{grid-template-columns:repeat(2,1fr)}.panels{grid-template-columns:1fr}.deskgrid{grid-template-columns:1fr}.side{display:none}.grid3{grid-template-columns:1fr}}
+</style>
+
+<!-- ══════════ تطبيق السائق ══════════ -->
+<section class="pane" id="driver"><div class="wrap">
+  <div class="sechead"><span class="kicker">02 / DRIVER APP</span><h2>تطبيق السائق</h2></div>
+  <p class="secsub">السائق هو المستخدم الأهم: إن لم يكسب، تتوقف المنصة. التطبيق يعرض الربح بوضوح قبل قبول أي طلب، ويعمل بأقل استهلاك ممكن للبطارية والباقة.</p>
+
+  <div class="stage">
+    <nav class="rail" id="railD" aria-label="شاشات تطبيق السائق">
+      <div class="rt">SCREENS</div>
+      <button aria-current="true" data-s="d1"><i>1</i>لوحة السائق</button>
+      <button data-s="d2"><i>2</i>طلب وارد</button>
+      <button data-s="d3"><i>3</i>تنفيذ الرحلة</button>
+      <button data-s="d4"><i>4</i>الأرباح والحوافز</button>
+      <button data-s="d5"><i>5</i>السحب النقدي</button>
+      <button data-s="d6"><i>6</i>الوثائق والتحقق</button>
+    </nav>
+
+    <div class="phone"><div class="viewport" id="vpD">
+
+      <div class="scr dark on" id="d1">
+        <div class="statusbar"><span>٧:٣٠</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٩٢٪</span></span></div>
+        <div class="pbody">
+          <div class="row between" style="margin-bottom:16px">
+            <div class="row"><span class="avatar" style="background:var(--sun);color:var(--night)">أ.و</span><div class="legend"><b style="font-size:14px">أحمد ولد سيدي</b><span style="font-size:11.5px;color:rgba(242,231,211,.6)">NKC 4821 · كورولا</span></div></div>
+            <span class="chip gold">★ ٤.٩</span>
+          </div>
+          <div class="card row between" style="border-color:var(--sun);background:rgba(245,183,44,.12);padding:16px">
+            <div><div style="font-size:12px;color:rgba(242,231,211,.7)">الحالة</div><b style="font-size:17px;color:var(--sun)">متصل — تستقبل الطلبات</b></div>
+            <span style="width:52px;height:30px;border-radius:999px;background:var(--sun);position:relative;flex:0 0 auto"><span style="position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--night)"></span></span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px">
+            <div class="card"><div style="font-size:11.5px;color:rgba(242,231,211,.6)">أرباح اليوم</div><b class="mono" style="font-size:23px;color:var(--sun)">٣٬٤٨٠</b></div>
+            <div class="card"><div style="font-size:11.5px;color:rgba(242,231,211,.6)">الرحلات</div><b class="mono" style="font-size:23px">١١</b></div>
+            <div class="card"><div style="font-size:11.5px;color:rgba(242,231,211,.6)">ساعات الاتصال</div><b class="mono" style="font-size:23px">٦.٢</b></div>
+            <div class="card"><div style="font-size:11.5px;color:rgba(242,231,211,.6)">نسبة القبول</div><b class="mono" style="font-size:23px">٩٤٪</b></div>
+          </div>
+          <div class="card" style="margin-top:12px;border-color:rgba(27,142,150,.4);background:rgba(27,142,150,.12)">
+            <div style="font-size:12.5px;color:#9BDDE1"><b>حافز اليوم:</b> أكمل ٤ رحلات إضافية قبل ١٢:٠٠ واربح <b class="mono">٥٠٠</b> أوقية.</div>
+            <div style="height:7px;border-radius:4px;background:rgba(255,255,255,.12);margin-top:9px;overflow:hidden"><span style="display:block;height:100%;width:64%;background:var(--sun)"></span></div>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <div class="row between"><span style="font-size:12.5px">مناطق الطلب المرتفع الآن</span><span class="chip gold">×١.٤</span></div>
+            <div style="font-size:11.5px;color:rgba(242,231,211,.6);margin-top:4px">السبخة · سوق العاصمة · الميناء</div>
+          </div>
+        </div>
+        <div class="pfoot"><button class="btn gold" data-go="d2">محاكاة طلب وارد</button></div>
+      </div>
+
+      <div class="scr dark" id="d2">
+        <div class="statusbar"><span>٧:٣٤</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٩٢٪</span></span></div>
+        <div class="pbody" style="display:flex;flex-direction:column;justify-content:center">
+          <div style="text-align:center;margin-bottom:16px">
+            <div class="ringwrap" style="margin:0 auto 10px">
+              <svg width="74" height="74"><circle cx="37" cy="37" r="32" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="5"/><circle class="p" cx="37" cy="37" r="32" fill="none" stroke="#F5B72C" stroke-width="5" stroke-linecap="round"/></svg>
+              <b>١٥</b>
+            </div>
+            <b style="font-size:15px">طلب جديد — سيارة</b>
+          </div>
+          <div class="card" style="border-color:var(--sun)">
+            <div class="row between" style="margin-bottom:12px"><span style="font-size:12.5px;color:rgba(242,231,211,.7)">صافي ربحك من الرحلة</span><b class="mono" style="font-size:26px;color:var(--sun)">٣٦٠</b></div>
+            <div style="height:1px;background:rgba(245,183,44,.2);margin-bottom:12px"></div>
+            <div class="row" style="align-items:flex-start;gap:10px;margin-bottom:10px"><span class="dot" style="width:9px;height:9px;border-radius:50%;background:var(--acacia-lite);margin-top:6px"></span><div><b style="font-size:13px">شارع جمال عبد الناصر</b><div style="font-size:11.5px;color:rgba(242,231,211,.55)">على بعد ٤٠٠ م · دقيقتان</div></div></div>
+            <div class="row" style="align-items:flex-start;gap:10px"><span class="dot" style="width:9px;height:9px;border-radius:50%;background:var(--sun);margin-top:6px"></span><div><b style="font-size:13px">مطار أم التونسي الدولي</b><div style="font-size:11.5px;color:rgba(242,231,211,.55)">١٤ كم · ٢٢ دقيقة</div></div></div>
+          </div>
+          <div class="row between" style="margin-top:12px;font-size:12px;color:rgba(242,231,211,.6)"><span>الدفع: بنكيلي</span><span>الراكب ★ ٤.٨</span></div>
+        </div>
+        <div class="pfoot"><div class="row" style="gap:9px"><button class="btn ghost" style="flex:.7;color:rgba(242,231,211,.7);border-color:rgba(255,255,255,.18)" data-go="d1">تجاهل</button><button class="btn gold" style="flex:1.6" data-go="d3">قبول الطلب</button></div></div>
+      </div>
+
+      <div class="scr" id="d3">
+        <div class="map"><svg><use href="#citymap"/></svg>
+          <svg viewBox="0 0 330 690" style="position:absolute;inset:0">
+            <path id="trip2" d="M70 560 C 120 470 150 400 210 320 C 250 268 268 190 250 120" fill="none" stroke="#0B6B45" stroke-width="6" stroke-linecap="round"/>
+            <g><rect x="-13" y="-9" width="26" height="18" rx="6" fill="#08241A"/><circle cx="0" cy="0" r="3" fill="#F5B72C"/>
+            <animateMotion dur="11s" repeatCount="indefinite" rotate="auto"><mpath href="#trip2"/></animateMotion></g>
+          </svg>
+        </div>
+        <div class="statusbar" style="position:relative;z-index:5"><span>٧:٤١</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٩١٪</span></span></div>
+        <div style="position:relative;z-index:5;padding:2px 16px">
+          <div class="card" style="background:var(--night);color:var(--dune);border:0;padding:13px 15px">
+            <div class="row" style="gap:12px"><b class="mono" style="font-size:28px;color:var(--sun)">١.٢</b>
+            <div class="legend"><b style="font-size:13.5px">انعطف يمينًا</b><span style="font-size:11.5px;color:rgba(242,231,211,.6)">نحو طريق نواذيبو · كم</span></div></div>
+          </div>
+        </div>
+        <div style="flex:1"></div>
+        <div class="sheet">
+          <div class="grabber"></div>
+          <div class="row between" style="margin-bottom:12px">
+            <div class="row"><span class="avatar" style="width:44px;height:44px">م.م</span><div class="legend"><b style="font-size:14px">محمد المختار</b><span style="font-size:11.5px;color:var(--muted)">الوجهة: المطار</span></div></div>
+            <b class="mono" style="font-size:19px;color:var(--acacia)">٣٦٠</b>
+          </div>
+          <div class="row" style="gap:8px;margin-bottom:10px">
+            <button class="btn ghost" style="flex:1;padding:11px;font-size:13px">اتصال</button>
+            <button class="btn ghost" style="flex:1;padding:11px;font-size:13px">وصلت</button>
+          </div>
+          <button class="btn primary" data-go="d4">إنهاء الرحلة</button>
+        </div>
+      </div>
+
+      <div class="scr" id="d4">
+        <div class="statusbar"><span>٢٠:١٠</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٤٤٪</span></span></div>
+        <div class="pbody">
+          <h3 class="ptitle">الأرباح</h3>
+          <p class="psub">الأسبوع الحالي · السبت إلى الجمعة</p>
+          <div class="card" style="background:linear-gradient(135deg,#0B6B45,#05301F);border:0;color:var(--dune);padding:18px">
+            <div style="font-size:12px;opacity:.72">صافي الأرباح هذا الأسبوع</div>
+            <div class="mono" style="font-size:32px;font-weight:600;color:var(--sun)">٢١٬٤٦٠ <span style="font-size:13px">MRU</span></div>
+            <div style="font-size:11.5px;opacity:.72;margin-top:4px">٦٨ رحلة · بعد خصم عمولة ١٥٪</div>
+          </div>
+          <svg viewBox="0 0 300 130" style="width:100%;height:130px;margin-top:14px" role="img" aria-label="أرباح الأيام السبعة">
+            <g font-family="IBM Plex Sans Arabic" font-size="9" fill="#6B7C73">
+              <text x="18" y="126" text-anchor="middle">سبت</text><text x="58" y="126" text-anchor="middle">أحد</text>
+              <text x="98" y="126" text-anchor="middle">إثن</text><text x="138" y="126" text-anchor="middle">ثلا</text>
+              <text x="178" y="126" text-anchor="middle">أرب</text><text x="218" y="126" text-anchor="middle">خمي</text>
+              <text x="258" y="126" text-anchor="middle">جمع</text>
+            </g>
+            <g fill="#0B6B45">
+              <rect x="6" y="62" width="24" height="48" rx="5"/><rect x="46" y="48" width="24" height="62" rx="5"/>
+              <rect x="86" y="70" width="24" height="40" rx="5"/><rect x="126" y="38" width="24" height="72" rx="5"/>
+              <rect x="166" y="30" width="24" height="80" rx="5"/><rect x="206" y="18" width="24" height="92" rx="5" fill="#F5B72C"/>
+              <rect x="246" y="54" width="24" height="56" rx="5"/>
+            </g>
+          </svg>
+          <div class="card row between" style="margin-top:8px"><span style="font-size:13px">أفضل يوم — الخميس</span><b class="mono">٤٬٩٢٠</b></div>
+          <div class="card row between" style="margin-top:8px"><span style="font-size:13px">حوافز وذروة</span><b class="mono" style="color:var(--acacia)">+٢٬١٥٠</b></div>
+          <div class="card row between" style="margin-top:8px"><span style="font-size:13px">إكراميات الركاب</span><b class="mono" style="color:var(--acacia)">+٦٤٠</b></div>
+        </div>
+      </div>
+
+      <div class="scr" id="d5">
+        <div class="statusbar"><span>٢٠:١٢</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٤٤٪</span></span></div>
+        <div class="pbody">
+          <h3 class="ptitle">سحب الأرباح</h3>
+          <p class="psub">التحويل الفوري متاح ٧ أيام في الأسبوع</p>
+          <div class="card" style="text-align:center;padding:22px"><div style="font-size:12px;color:var(--muted)">الرصيد القابل للسحب</div><b class="mono" style="font-size:34px;color:var(--acacia)">٢١٬٤٦٠</b></div>
+          <div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:var(--muted);margin:18px 0 8px;direction:ltr">DESTINATION</div>
+          <button class="opt" aria-pressed="true"><span class="avatar" style="width:36px;height:36px;border-radius:11px;font-size:11px">B</span><span class="legend"><span class="nm">بنكيلي</span><span class="dt">•••• ٢٢٠٩ · فوري · بلا رسوم</span></span></button>
+          <button class="opt"><span class="avatar" style="width:36px;height:36px;border-radius:11px;font-size:11px;background:#1B8E96">M</span><span class="legend"><span class="nm">مصرفي</span><span class="dt">تحويل خلال ساعة</span></span></button>
+          <button class="opt"><span class="avatar" style="width:36px;height:36px;border-radius:11px;font-size:11px;background:#8A6100">₮</span><span class="legend"><span class="nm">وكيل ريمڤو</span><span class="dt">استلام نقدي من ٤٠ نقطة</span></span></button>
+          <div class="card" style="margin-top:10px;background:rgba(11,107,69,.07);border-color:rgba(11,107,69,.25);font-size:12.5px;color:#2E5A48">السحب الأول مجاني كل يوم. تُحوَّل الأرباح تلقائيًا كل خميس إن لم تسحبها.</div>
+        </div>
+        <div class="pfoot"><button class="btn primary">سحب ٢١٬٤٦٠ أوقية</button></div>
+      </div>
+
+      <div class="scr" id="d6">
+        <div class="statusbar"><span>١٠:٠٥</span><span class="sigs"><b style="height:5px"></b><b style="height:8px"></b><b style="height:11px"></b><span style="margin-inline-start:6px">٧٠٪</span></span></div>
+        <div class="pbody">
+          <h3 class="ptitle">ملف السائق</h3>
+          <p class="psub">التحقق يستغرق ٢٤ ساعة عمل. لا يمكن الاتصال قبل اكتماله.</p>
+          <div class="card row between" style="margin-bottom:9px"><div class="row"><span class="avatar" style="width:34px;height:34px;border-radius:10px;background:var(--acacia)"><svg style="width:16px;height:16px"><use href="#i-shield"/></svg></span><div class="legend"><b style="font-size:13px">بطاقة التعريف الوطنية</b><span style="font-size:11px;color:var(--muted)">مطابقة مع السجل المدني</span></div></div><span class="chip">موثّقة</span></div>
+          <div class="card row between" style="margin-bottom:9px"><div class="row"><span class="avatar" style="width:34px;height:34px;border-radius:10px;background:var(--acacia)"><svg style="width:16px;height:16px"><use href="#i-shield"/></svg></span><div class="legend"><b style="font-size:13px">رخصة السياقة</b><span style="font-size:11px;color:var(--muted)">صالحة حتى ٢٠٢٨</span></div></div><span class="chip">موثّقة</span></div>
+          <div class="card row between" style="margin-bottom:9px"><div class="row"><span class="avatar" style="width:34px;height:34px;border-radius:10px;background:var(--acacia)"><svg style="width:16px;height:16px"><use href="#i-shield"/></svg></span><div class="legend"><b style="font-size:13px">الرمادية والتأمين</b><span style="font-size:11px;color:var(--muted)">تأمين ضد الغير ساري</span></div></div><span class="chip">موثّقة</span></div>
+          <div class="card row between" style="margin-bottom:9px;border-color:rgba(245,183,44,.5);background:rgba(245,183,44,.09)"><div class="row"><span class="avatar" style="width:34px;height:34px;border-radius:10px;background:var(--sun);color:var(--night)"><svg style="width:16px;height:16px"><use href="#i-clock"/></svg></span><div class="legend"><b style="font-size:13px">الفحص الفني للمركبة</b><span style="font-size:11px;color:var(--muted)">ينتهي بعد ١٨ يومًا</span></div></div><span class="chip gold">تجديد قريب</span></div>
+          <div class="card"><div class="row" style="align-items:flex-start;gap:10px"><svg style="width:20px;height:20px;color:var(--acacia);flex:0 0 20px"><use href="#i-shield"/></svg><div style="font-size:12.5px;color:#455A51"><b>تدريب السلامة</b> — ٤ دروس قصيرة بالحسانية والفرنسية، إلزامية قبل أول رحلة، ويعاد الاختبار كل ٦ أشهر.</div></div></div>
+        </div>
+      </div>
+
+    </div></div>
+
+    <div class="notes">
+      <h3>اقتصاديات السائق</h3>
+      <div class="nsub">القرارات التي تجعل السائق يبقى على المنصة.</div>
+      <div class="note on" data-n="d1"><ul>
+        <li><b>عمولة ١٥٪</b> في السنة الأولى — أقل من المعتاد إقليميًا لبناء العرض بسرعة.</li>
+        <li>شاشة واحدة تجيب سؤاله الوحيد: كم كسبت اليوم، وأين أذهب الآن.</li>
+        <li>خريطة الطلب المرتفع تُحدَّث كل ١٠ دقائق حسب فجوة العرض والطلب الفعلية.</li>
+      </ul></div>
+      <div class="note" data-n="d2"><ul>
+        <li>يُعرض <b>صافي الربح</b> لا إجمالي الأجرة — شفافية تمنع الشعور بالخصم الخفي.</li>
+        <li>تظهر الوجهة قبل القبول: عادل للسائق، ويقلّل الإلغاء بعد الوصول.</li>
+        <li>١٥ ثانية للقبول، والرفض لا يعاقب إلا عند تكراره بنسبة كبيرة.</li>
+      </ul></div>
+      <div class="note" data-n="d3"><ul>
+        <li>ملاحة مدمجة بالصوت العربي، مع خرائط محمّلة مسبقًا لمدن التغطية.</li>
+        <li>تعليمات كبيرة عالية التباين تُقرأ تحت شمس الظهيرة.</li>
+        <li>وضع اقتصادي للبطارية يقلّل الاستهلاك إلى النصف في الرحلات الطويلة.</li>
+      </ul></div>
+      <div class="note" data-n="d4"><ul>
+        <li>حوافز يومية وأسبوعية موجّهة لسدّ ساعات النقص لا لزيادة الرحلات عمومًا.</li>
+        <li>الإكرامية داخل التطبيق تصل للسائق كاملة بلا عمولة.</li>
+        <li>كشف مفصّل قابل للتصدير يخدم السائق عند طلب تمويل أو تأجير مركبة.</li>
+      </ul></div>
+      <div class="note" data-n="d5"><ul>
+        <li>سحب فوري إلى بنكيلي — عامل الاحتفاظ الأول في الأسواق النقدية.</li>
+        <li>شبكة وكلاء للاستلام النقدي في المدن التي تقل فيها الخدمات البنكية.</li>
+        <li>لا رسوم على السحب الأول يوميًا، ما يمنع تآكل دخل السائق.</li>
+      </ul></div>
+      <div class="note" data-n="d6"><ul>
+        <li>تحقق مزدوج: الهوية والرخصة والتأمين، مع مطابقة الوجه قبل بدء الوردية.</li>
+        <li>تنبيه استباقي قبل انتهاء الفحص الفني بثلاثة أسابيع لتفادي الإيقاف.</li>
+        <li>تدريب سلامة قصير بالحسانية — لغة السائق الفعلية لا لغة المستندات.</li>
+      </ul></div>
+      <div class="techbox"><div class="t">DRIVER STACK</div>
+        <code>Flutter · background geolocation (battery-aware)</code>
+        <code>Foreground service · 8s ping · adaptive batching</code>
+        <code>KYC: OCR + face match + manual review</code>
+      </div>
+      <div class="playbar"><button id="playD">▶ تشغيل وردية كاملة</button><span class="cnt" id="cntD">1 / 6</span></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════ لوحة التشغيل ══════════ -->
+<section class="pane" id="admin"><div class="wrap">
+  <div class="sechead"><span class="kicker">03 / OPERATIONS</span><h2>لوحة التشغيل</h2></div>
+  <p class="secsub">مركز التحكم الذي يديره فريق نواكشوط: متابعة العرض والطلب لحظيًا، التسعير، دعم الحوادث، والمحاسبة مع السائقين والمتاجر.</p>
+
+  <div class="desk">
+    <div class="deskbar"><div class="dots"><i></i><i></i><i></i></div><div class="url">ops.rimgo.mr / dashboard</div>
+      <div style="margin-inline-start:auto;display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:#3ED598;display:inline-block"></span>مباشر · نواكشوط</div>
+    </div>
+    <div class="deskgrid">
+      <aside class="side">
+        <div class="lbl">OVERVIEW</div>
+        <a class="act" href="#"><svg><use href="#i-home"/></svg>اللوحة الرئيسية</a>
+        <a href="#"><svg><use href="#i-car"/></svg>الرحلات المباشرة</a>
+        <a href="#"><svg><use href="#i-bag"/></svg>طلبات التوصيل</a>
+        <div class="lbl">NETWORK</div>
+        <a href="#"><svg><use href="#i-user"/></svg>السائقون</a>
+        <a href="#"><svg><use href="#i-box"/></svg>المتاجر والمطاعم</a>
+        <a href="#"><svg><use href="#i-shield"/></svg>السلامة والحوادث</a>
+        <div class="lbl">FINANCE</div>
+        <a href="#"><svg><use href="#i-wallet"/></svg>التسويات والمدفوعات</a>
+        <a href="#"><svg><use href="#i-clock"/></svg>التسعير والحوافز</a>
+      </aside>
+      <div class="deskmain">
+        <div class="kpis">
+          <div class="kpi"><div class="k">رحلات اليوم</div><div class="v">٤٬٢١٨</div><div class="d up">▲ ١٢.٤٪ عن الأمس</div></div>
+          <div class="kpi"><div class="k">سائقون متصلون الآن</div><div class="v">٦٣٧</div><div class="d up">▲ ٤.١٪</div></div>
+          <div class="kpi"><div class="k">متوسط زمن الوصول</div><div class="v">٤:٢٠</div><div class="d up">▼ ٣٨ ثانية</div></div>
+          <div class="kpi"><div class="k">إجمالي المبيعات (MRU)</div><div class="v">١.٨٤م</div><div class="d up">▲ ٩.٧٪</div></div>
+        </div>
+
+        <div class="panels">
+          <div class="panel">
+            <h4>الطلب خلال اليوم</h4>
+            <div class="ph">عدد الطلبات في الساعة — مقارنة بين الركاب والتوصيل</div>
+            <svg viewBox="0 0 560 200" style="width:100%;height:200px" role="img" aria-label="منحنى الطلب بالساعة">
+              <g stroke="#E7DFCF" stroke-width="1">
+                <line x1="34" y1="20" x2="548" y2="20"/><line x1="34" y1="62" x2="548" y2="62"/>
+                <line x1="34" y1="104" x2="548" y2="104"/><line x1="34" y1="146" x2="548" y2="146"/><line x1="34" y1="170" x2="548" y2="170"/>
+              </g>
+              <g font-family="IBM Plex Mono" font-size="9" fill="#93A199" text-anchor="end">
+                <text x="28" y="24">400</text><text x="28" y="66">300</text><text x="28" y="108">200</text><text x="28" y="150">100</text><text x="28" y="174">0</text>
+              </g>
+              <path d="M40 160 L104 150 L168 96 L232 118 L296 108 L360 60 L424 34 L488 78 L544 132" fill="none" stroke="#0B6B45" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <path d="M40 160 L104 150 L168 96 L232 118 L296 108 L360 60 L424 34 L488 78 L544 132 L544 170 L40 170Z" fill="#0B6B45" opacity=".08"/>
+              <path d="M40 168 L104 166 L168 150 L232 128 L296 120 L360 112 L424 92 L488 104 L544 150" fill="none" stroke="#1B8E96" stroke-width="2.5" stroke-dasharray="6 5" stroke-linejoin="round" stroke-linecap="round"/>
+              <g fill="#0B6B45">
+                <circle cx="424" cy="34" r="4"/><circle cx="360" cy="60" r="3"/><circle cx="168" cy="96" r="3"/>
+              </g>
+              <g font-family="IBM Plex Mono" font-size="9" fill="#93A199" text-anchor="middle">
+                <text x="40" y="190">05</text><text x="104" y="190">07</text><text x="168" y="190">09</text><text x="232" y="190">11</text>
+                <text x="296" y="190">13</text><text x="360" y="190">15</text><text x="424" y="190">18</text><text x="488" y="190">21</text><text x="544" y="190">23</text>
+              </g>
+            </svg>
+            <div class="legendrow"><span><i style="background:#0B6B45"></i>نقل الركاب</span><span><i style="background:#1B8E96"></i>توصيل الطلبات</span><span>الذروة ١٨:٠٠ · ٣٩٤ طلبًا</span></div>
+          </div>
+
+          <div class="panel">
+            <h4>توزيع الخدمات</h4>
+            <div class="ph">حصة كل خدمة من طلبات اليوم</div>
+            <svg viewBox="0 0 260 200" style="width:100%;height:200px" role="img" aria-label="حصة كل خدمة">
+              <g font-family="IBM Plex Sans Arabic" font-size="11" fill="#3B4A43">
+                <text x="256" y="26" text-anchor="end">سيارة</text><text x="256" y="70" text-anchor="end">دراجة</text>
+                <text x="256" y="114" text-anchor="end">طلبات</text><text x="256" y="158" text-anchor="end">شحن</text>
+              </g>
+              <g>
+                <rect x="60" y="14" width="130" height="16" rx="8" fill="#E7DFCF"/><rect x="112" y="14" width="78" height="16" rx="8" fill="#0B6B45"/>
+                <rect x="60" y="58" width="130" height="16" rx="8" fill="#E7DFCF"/><rect x="128" y="58" width="62" height="16" rx="8" fill="#F5B72C"/>
+                <rect x="60" y="102" width="130" height="16" rx="8" fill="#E7DFCF"/><rect x="152" y="102" width="38" height="16" rx="8" fill="#1B8E96"/>
+                <rect x="60" y="146" width="130" height="16" rx="8" fill="#E7DFCF"/><rect x="177" y="146" width="13" height="16" rx="6.5" fill="#8A6100"/>
+              </g>
+              <g font-family="IBM Plex Mono" font-size="11" fill="#3B4A43" text-anchor="start">
+                <text x="14" y="27">42%</text><text x="14" y="71">33%</text><text x="14" y="115">20%</text><text x="14" y="159">5%</text>
+              </g>
+            </svg>
+            <div class="legendrow"><span>الدراجة تنمو أسرع من السيارة بمعدل ٢.٣×</span></div>
+          </div>
+        </div>
+
+        <div class="panels" style="margin-top:14px">
+          <div class="panel">
+            <h4>الرحلات النشطة الآن</h4>
+            <div class="ph">آخر تحديث قبل ٣ ثوانٍ</div>
+            <table>
+              <thead><tr><th>ORDER</th><th>الخدمة</th><th>السائق</th><th>الحي</th><th>الحالة</th><th>MRU</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">#48210</td><td>سيارة</td><td>أحمد ولد سيدي</td><td>تفرغ زينة ← المطار</td><td><span class="stat st-go">جارية</span></td><td class="mono">٤٥٠</td></tr>
+                <tr><td class="mono">#48209</td><td>دراجة</td><td>يسلم ولد باب</td><td>لكصر ← السبخة</td><td><span class="stat st-go">جارية</span></td><td class="mono">١٦٠</td></tr>
+                <tr><td class="mono">#48207</td><td>طلبات</td><td>سيدي محمد</td><td>مطعم الشنقيطي</td><td><span class="stat st-wait">بانتظار المطعم</span></td><td class="mono">٩٢٠</td></tr>
+                <tr><td class="mono">#48204</td><td>سيارة</td><td>الشيخ ولد أحمد</td><td>عرفات ← الميناء</td><td><span class="stat st-done">اكتملت</span></td><td class="mono">٣٨٠</td></tr>
+                <tr><td class="mono">#48201</td><td>شحن</td><td>محمد الأمين</td><td>سوق العاصمة ← دار النعيم</td><td><span class="stat st-go">جارية</span></td><td class="mono">١٬٢٠٠</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <h4>فجوة العرض والطلب</h4>
+            <div class="ph">الأحياء التي تحتاج سائقين الآن</div>
+            <table>
+              <thead><tr><th>الحي</th><th>الطلب</th><th>السائقون</th><th>المضاعف</th></tr></thead>
+              <tbody>
+                <tr><td>السبخة</td><td class="mono">٨٤</td><td class="mono">٣١</td><td><span class="stat st-wait">×١.٦</span></td></tr>
+                <tr><td>سوق العاصمة</td><td class="mono">٧٢</td><td class="mono">٤٠</td><td><span class="stat st-wait">×١.٤</span></td></tr>
+                <tr><td>تفرغ زينة</td><td class="mono">٦٥</td><td class="mono">٥٨</td><td><span class="stat st-go">×١.٠</span></td></tr>
+                <tr><td>عرفات</td><td class="mono">٤٩</td><td class="mono">٥٢</td><td><span class="stat st-go">×١.٠</span></td></tr>
+                <tr><td>دار النعيم</td><td class="mono">٣٨</td><td class="mono">٤٦</td><td><span class="stat st-done">فائض</span></td></tr>
+              </tbody>
+            </table>
+            <div class="legendrow"><span>المضاعف يُفعَّل تلقائيًا وله سقف ×١.٨ بقرار داخلي لحماية سمعة الأسعار.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════ المنظومة ══════════ -->
+<section class="pane" id="system"><div class="wrap">
+  <div class="sechead"><span class="kicker">04 / SYSTEM</span><h2>المنظومة والخطة</h2></div>
+  <p class="secsub">ما الذي يجعل هذه المنصة قابلة للتشغيل فعليًا في موريتانيا: البنية التقنية، نموذج الإيراد، خارطة الإطلاق، والامتثال.</p>
+
+  <div class="grid3" style="margin-bottom:34px">
+    <div class="blk"><div class="n">ARCHITECTURE</div><h4>البنية التقنية</h4>
+      <p>خدمات مصغّرة على سحابة قريبة جغرافيًا (باريس أو الدار البيضاء) لتقليل زمن الاستجابة، مع نسخة بيانات محلية داخل موريتانيا للامتثال.</p>
+      <ul>
+        <li>الواجهة: Flutter لتطبيقَي العميل والسائق</li>
+        <li>الخادم: Node.js (NestJS) + PostgreSQL + PostGIS</li>
+        <li>المطابقة والتتبع: Redis + WebSocket + Kafka</li>
+        <li>الخرائط: OpenStreetMap + MapLibre + Valhalla</li>
+        <li>لوحة التشغيل: React + خرائط لحظية</li>
+      </ul>
+    </div>
+    <div class="blk"><div class="n">REVENUE</div><h4>مصادر الإيراد</h4>
+      <p>خمسة مصادر تجعل المنصة أقل اعتمادًا على العمولة وحدها.</p>
+      <table class="moneytable" style="margin-top:8px">
+        <tr><td>عمولة رحلات الركاب</td><td>١٥–٢٠٪</td></tr>
+        <tr><td>عمولة المطاعم والمتاجر</td><td>١٢–١٨٪</td></tr>
+        <tr><td>رسوم توصيل ثابتة</td><td>٦٠–١٢٠ MRU</td></tr>
+        <tr><td>اشتراك حسابات الشركات</td><td>شهري</td></tr>
+        <tr><td>إعلانات المتاجر داخل التطبيق</td><td>CPC</td></tr>
+      </table>
+    </div>
+    <div class="blk"><div class="n">UNIT ECONOMICS</div><h4>اقتصاديات الرحلة</h4>
+      <p>مثال على رحلة سيارة متوسطة داخل نواكشوط.</p>
+      <table class="moneytable" style="margin-top:8px">
+        <tr><td>متوسط قيمة الرحلة</td><td>٤٢٠</td></tr>
+        <tr><td>عمولة المنصة (١٥٪)</td><td>٦٣</td></tr>
+        <tr><td>تكلفة الدفع والرسائل</td><td>−١١</td></tr>
+        <tr><td>دعم وتشغيل لكل رحلة</td><td>−١٤</td></tr>
+        <tr><td><b>هامش المساهمة</b></td><td><b>٣٨ MRU</b></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-bottom:34px">
+    <div class="blk"><div class="n">LOCAL REALITY</div><h4>مصمّمة للواقع المحلي</h4>
+      <ul>
+        <li><b>عناوين غير مرقّمة:</b> دبوس + وصف صوتي + نقاط دلالة معروفة.</li>
+        <li><b>شبكة متقطّعة:</b> طابور محلي للطلبات وبديل عبر الرسائل القصيرة.</li>
+        <li><b>اقتصاد نقدي:</b> النقد خيار كامل، والمحفظة تُكافأ بخصم لا بإجبار.</li>
+        <li><b>طرق رملية:</b> الدراجة فئة أولى، وتصنيف الطرق يؤثر في التسعير.</li>
+        <li><b>تعدد اللغات:</b> عربية وفرنسية في الواجهة، وحسانية في الصوت والدعم.</li>
+      </ul>
+    </div>
+    <div class="blk"><div class="n">TRUST &amp; SAFETY</div><h4>الثقة والسلامة</h4>
+      <ul>
+        <li>تحقق من الهوية والرخصة والتأمين قبل أول رحلة.</li>
+        <li>مطابقة وجه السائق عند بداية كل وردية.</li>
+        <li>زر طوارئ متصل بغرفة عمليات تعمل ١٦ ساعة يوميًا.</li>
+        <li>مشاركة الرحلة برابط، وترقيم هاتفي وسيط للطرفين.</li>
+        <li>تأمين حوادث للركاب أثناء الرحلة عبر شريك تأمين محلي.</li>
+      </ul>
+    </div>
+    <div class="blk"><div class="n">COMPLIANCE</div><h4>الجانب القانوني</h4>
+      <ul>
+        <li>شركة موريتانية (SARL) مسجّلة بشباك الاستثمار الموحّد.</li>
+        <li>ترخيص نقل حضري بالتنسيق مع وزارة النقل وبلدية نواكشوط.</li>
+        <li>اتفاقية مع مؤسسة دفع مرخّصة من البنك المركزي الموريتاني.</li>
+        <li>حفظ بيانات المستخدمين ومعالجتها وفق التشريع الوطني.</li>
+        <li>عقود شراكة مع السائقين كشركاء مستقلين لا كموظفين.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panels" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="blk"><div class="n">ROADMAP</div><h4>خارطة الطريق</h4>
+      <div class="tl">
+        <div class="ph2"><div class="q">M0 — M3</div><h5>الأساس</h5><p>تسجيل الشركة، اتفاقية الدفع، بناء النسخة الأولى لتطبيقَي العميل والسائق، وتجربة مغلقة مع ٥٠ سائقًا في تفرغ زينة ولكصر.</p></div>
+        <div class="ph2"><div class="q">M4 — M6</div><h5>إطلاق نواكشوط</h5><p>فتح خدمتَي السيارة والدراجة لكل أحياء العاصمة، هدف ٥٠٠ سائق نشط و٣٬٠٠٠ رحلة يوميًا.</p></div>
+        <div class="ph2"><div class="q">M7 — M10</div><h5>التوصيل</h5><p>ضم ١٥٠ مطعمًا ومتجرًا، إطلاق «اطلب أي شيء»، وحسابات الشركات للمؤسسات والبنوك.</p></div>
+        <div class="ph2"><div class="q">M11 — M18</div><h5>التوسع الوطني</h5><p>نواذيبو، روصو، كيهيدي، أطار. إضافة الشحن بين المدن ومنتج التقسيط لتمليك الدراجات للسائقين.</p></div>
+      </div>
+    </div>
+    <div class="blk"><div class="n">GO TO MARKET</div><h4>كيف نكسب السوق</h4>
+      <ul>
+        <li><b>العرض قبل الطلب:</b> تجنيد السائقين أولًا عبر محطات الوقود وأسواق قطع الغيار، بعمولة صفرية أول ٦٠ يومًا.</li>
+        <li><b>نقطة الثقة:</b> حملة واحدة برسالة واحدة — «السعر يظهر قبل ما تركب».</li>
+        <li><b>القنوات:</b> واتساب وفيسبوك هما الإنترنت الفعلي في موريتانيا، لا الإعلانات المدفوعة التقليدية.</li>
+        <li><b>الرموز المحلية:</b> شراكات مع أندية ومؤثرين ومطاعم معروفة في نواكشوط.</li>
+        <li><b>الشركات:</b> حسابات مؤسسية للبنوك والمنظمات الدولية — دخل ثابت ومرتفع القيمة.</li>
+      </ul>
+      <div class="techbox" style="margin-top:16px"><div class="t">YEAR-1 TARGETS</div>
+        <code>Drivers 1,100 · Daily trips 6,000</code>
+        <code>Cities 2 · Merchants 250</code>
+        <code>GMV ≈ 290M MRU · Take rate 15%</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="blk" style="margin-top:16px"><div class="n">BRAND</div><h4>لماذا «ريمڤو»</h4>
+    <div class="grid3" style="margin-top:10px">
+      <div><p><b>ريم</b> — رمز موريتانيا الدولي (RIM)، وفي العربية اسم الغزال الأبيض: السرعة والرشاقة والجمال. اسم يُنطق بسهولة بالعربية والفرنسية والحسانية.</p></div>
+      <div><p><b>ڤو</b> — الانطلاق (Go)، وتُكتب بالحرف «ڤ» المستعمل في الكتابة الموريتانية. الاسم قصير، من مقطعين، وسهل الحفظ والنداء.</p></div>
+      <div><p><b>الشعار</b> — دبوس موقع يحتضن الهلال والنجمة: التنقّل والانتماء في شكل واحد. يُقرأ بوضوح عند ١٦ بكسل، ويعمل بلون واحد على أي خلفية.</p></div>
+    </div>
+  </div>
+</div></section>
+</main>
+
+<footer style="background:var(--night);color:rgba(242,231,211,.65);padding:44px 0 54px;margin-top:20px">
+  <div class="wrap" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+    <div class="brandline" style="color:var(--dune)"><svg style="width:34px;height:34px"><use href="#mark"/></svg><div><b style="font-size:22px">ريمڤو</b> <span>RIMGO</span></div></div>
+    <div style="font-size:13px;max-width:46ch">نموذج أوّلي لمنصة تنقل وتوصيل موريتانية. الشاشات والأرقام المعروضة توضيحية لأغراض العرض والتخطيط.</div>
+    <div style="margin-inline-start:auto;font-family:var(--mono);font-size:11px;letter-spacing:2px;direction:ltr;color:var(--sun)">MOVE · DELIVER · MAURITANIA</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // تبديل الأقسام
+  var tabs=document.querySelectorAll('.topnav button');
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(x){x.setAttribute('aria-selected','false')});
+      t.setAttribute('aria-selected','true');
+      document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('on')});
+      document.getElementById(t.dataset.pane).classList.add('on');
+      window.scrollTo({top:document.querySelector('.topbar').offsetHeight+document.querySelector('.hero').offsetHeight-80,behavior:'smooth'});
+    });
+  });
+
+  // محرّك الشاشات
+  function wire(railId, vpId, cntId, playId){
+    var rail=document.getElementById(railId), vp=document.getElementById(vpId),
+        cnt=document.getElementById(cntId), play=document.getElementById(playId);
+    if(!rail) return;
+    var btns=Array.prototype.slice.call(rail.querySelectorAll('button')),
+        ids=btns.map(function(b){return b.dataset.s}), timer=null;
+
+    function show(id){
+      var i=ids.indexOf(id); if(i<0) return;
+      vp.querySelectorAll('.scr').forEach(function(s){s.classList.toggle('on', s.id===id)});
+      btns.forEach(function(b){b.setAttribute('aria-current', b.dataset.s===id?'true':'false')});
+      var pane=vp.closest('.pane');
+      pane.querySelectorAll('.note').forEach(function(n){n.classList.toggle('on', n.dataset.n===id)});
+      cnt.textContent=(i+1)+' / '+ids.length;
+    }
+    btns.forEach(function(b){b.addEventListener('click',function(){stop();show(b.dataset.s)})});
+    vp.addEventListener('click',function(e){
+      var t=e.target.closest('[data-go]'); if(!t) return;
+      stop(); show(t.dataset.go);
+    });
+    function stop(){ if(timer){clearInterval(timer);timer=null;play.textContent='▶ '+play.dataset.lbl;} }
+    play.dataset.lbl=play.textContent.replace('▶ ','');
+    play.addEventListener('click',function(){
+      if(timer){stop();return}
+      play.textContent='■ إيقاف العرض';
+      var i=0; show(ids[0]);
+      timer=setInterval(function(){ i=(i+1)%ids.length; show(ids[i]); if(i===0){ } },2600);
+    });
+    show(ids[0]);
+  }
+  wire('railC','vpC','cntC','playC');
+  wire('railD','vpD','cntD','playD');
+})();
+</script>
+</body>
+</html>
