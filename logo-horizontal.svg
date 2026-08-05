@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 150" width="520" height="150" role="img" aria-label="RIMGO ريمڤو">
+<defs><linearGradient id="rg" x1="20" y1="112" x2="98" y2="16" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#E89B00"/><stop offset=".55" stop-color="#F9C41A"/><stop offset="1" stop-color="#FFE694"/></linearGradient></defs>
+<g transform="translate(10,15)"><path fill="url(#rg)" fill-rule="evenodd" d="M60 110 C43 87, 28 73, 28 52 A32 32 0 1 1 92 52 C92 73 77 87 60 110 Z M52.93 30.23 A21 21 0 1 0 79.77 57.07 A19.5 19.5 0 0 1 52.93 30.23 Z M73.50 31.00 L75.48 35.77 L80.63 36.18 L76.71 39.54 L77.91 44.57 L73.50 41.88 L69.09 44.57 L70.29 39.54 L66.37 36.18 L71.52 35.77 Z"/></g>
+<text x="150" y="78" font-family='Poppins, Montserrat, Segoe UI, Arial, sans-serif' font-size="62" font-weight="700" letter-spacing="2" fill="#0B7A4B">RIM<tspan fill="#F9C41A">GO</tspan></text>
+<text x="152" y="112" font-family='Poppins, Montserrat, Segoe UI, Arial, sans-serif' font-size="19" font-weight="500" letter-spacing="6.5" fill="#5B6B63">MOVE  •  DELIVER  •  MAURITANIA</text>
+</svg>

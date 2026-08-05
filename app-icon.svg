@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="RIMGO app icon">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#0E8A55"/><stop offset="1" stop-color="#05301F"/></linearGradient>
+<linearGradient id="rg" x1="120" y1="430" x2="400" y2="110" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#E89B00"/><stop offset=".55" stop-color="#F9C41A"/><stop offset="1" stop-color="#FFE694"/></linearGradient></defs>
+<rect width="512" height="512" rx="118" fill="url(#bg)"/>
+<g transform="translate(106,86) scale(2.5)"><path fill="url(#rg)" fill-rule="evenodd" d="M60 110 C43 87, 28 73, 28 52 A32 32 0 1 1 92 52 C92 73 77 87 60 110 Z M52.93 30.23 A21 21 0 1 0 79.77 57.07 A19.5 19.5 0 0 1 52.93 30.23 Z M73.50 31.00 L75.48 35.77 L80.63 36.18 L76.71 39.54 L77.91 44.57 L73.50 41.88 L69.09 44.57 L70.29 39.54 L66.37 36.18 L71.52 35.77 Z"/></g></svg>
